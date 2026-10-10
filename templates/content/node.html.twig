@@ -1,0 +1,58 @@
+{#
+/**
+ * @file
+ * Node template.
+ *
+ * - Full view: plain long-form article (no card chrome) with a meta line
+ *   and the body held to a readable measure.
+ * - Teaser and other view modes: a Pico <article> card with the title in
+ *   the card header. Add 'card--book' or 'card--note' via a
+ *   node--TYPE--teaser.html.twig override for the leather / parchment looks.
+ */
+#}
+{%
+  set classes = [
+    'node',
+    'node--type-' ~ node.bundle|clean_class,
+    node.isPromoted() ? 'node--promoted',
+    node.isSticky() ? 'node--sticky',
+    not node.isPublished() ? 'node--unpublished',
+    view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
+    not page ? 'card',
+  ]
+%}
+<article{{ attributes.addClass(classes) }}>
+
+  {{ title_prefix }}
+  {% if label and not page %}
+    <header>
+      <h2{{ title_attributes.addClass('card__title') }}>
+        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+      </h2>
+    </header>
+  {% endif %}
+  {{ title_suffix }}
+
+  {% if display_submitted %}
+    {#
+      The author's compact user view prints an empty <article> when there is
+      no picture, which Pico would style as a card, so only print it when it
+      contains an image.
+    #}
+    {% set author_picture_markup = author_picture|render %}
+    <div class="node__meta">
+      {% if '<img' in author_picture_markup %}
+        <div class="node__author-picture">{{ author_picture_markup }}</div>
+      {% endif %}
+      <span{{ author_attributes }}>
+        {% trans %}By {{ author_name }} on {{ date }}{% endtrans %}
+      </span>
+      {{ metadata }}
+    </div>
+  {% endif %}
+
+  <div{{ content_attributes.addClass('node__content') }}>
+    {{ content }}
+  </div>
+
+</article>

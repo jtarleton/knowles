@@ -1,0 +1,28 @@
+name: Knowles
+type: theme
+description: "A warm, old-world blog theme built on Pico CSS v2: dark wood and parchment color schemes (or follow the visitor's OS), brass accents, and Fraunces and Lora type. Colors, fonts, logo, search and footer are all theme settings."
+core_version_requirement: ^10.3 || ^11
+base theme: stable9
+
+# Drupal's info file can't reference a URL, so the Google Fonts stylesheet
+# is the `knowles/fonts` library, attached from knowles_page_attachments_alter()
+# unless the "Load web fonts" theme setting is turned off.
+libraries:
+  - knowles/pico
+  - knowles/global
+
+regions:
+  header: 'Header (branding and menus)'
+  primary_menu: 'Primary menu'
+  breadcrumb: Breadcrumb
+  highlighted: Highlighted
+  help: Help
+  content_top: 'Content top'
+  content: Content
+  sidebar: Sidebar
+  footer_brand: 'Footer brand'
+  footer_first: 'Footer column one'
+  footer_second: 'Footer column two'
+  footer_third: 'Footer column three'
+  footer_legal: 'Footer legal'
+  search_modal: 'Search modal (hidden until opened)'

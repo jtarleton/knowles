@@ -1,0 +1,438 @@
+/**
+ * @file
+ * Drupal chrome: status messages, local task tabs, breadcrumb, pager,
+ * tables, and small core widgets – all in the study aesthetic.
+ *
+ * Markup targets are Drupal 11 core / stable9 templates.
+ */
+
+/* -------------------------------------------------------------------------
+ * Status messages (status-messages.html.twig in this theme)
+ * Styled as telegrams / notes slipped under the door.
+ * ---------------------------------------------------------------------- */
+.pico .messages-list {
+  margin-bottom: 1.5rem;
+}
+.pico .messages {
+  --kn-msg-ink: var(--kn-hunter-light);
+
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  margin-bottom: 0.75rem;
+  padding: 0.9rem 1.15rem;
+  color: var(--kn-text);
+  border: 1px solid color-mix(in sRGB, var(--kn-msg-ink) 45%, transparent);
+  border-inline-start: 3px solid var(--kn-msg-ink);
+  border-radius: 0 var(--kn-radius) var(--kn-radius) 0;
+  background: var(--kn-grain), color-mix(in sRGB, var(--kn-msg-ink) 10%, var(--kn-surface));
+  box-shadow: var(--kn-shadow-sm);
+  gap: 0.25rem 0.85rem;
+}
+.pico .messages::before {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  content: "✓";
+  color: var(--kn-msg-ink);
+  border: 1px solid var(--kn-msg-ink);
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.pico .messages > * {
+  grid-column: 2;
+}
+.pico .messages__content {
+  grid-row: 1;
+}
+.pico .messages :is(ul, p):last-child {
+  margin-bottom: 0;
+}
+.pico .messages--warning {
+  --kn-msg-ink: var(--kn-brass);
+}
+.pico .messages--warning::before {
+  content: "!";
+}
+.pico .messages--error {
+  --kn-msg-ink: var(--kn-oxblood-light);
+}
+.pico .messages--error::before {
+  content: "✕";
+}
+:root[data-theme="light"] .pico .messages--status {
+  --kn-msg-ink: var(--kn-hunter);
+}
+:root[data-theme="light"] .pico .messages--error {
+  --kn-msg-ink: var(--kn-oxblood-ink);
+}
+:root[data-theme="light"] .pico .messages--warning {
+  --kn-msg-ink: var(--kn-brass-ink);
+}
+
+/* -------------------------------------------------------------------------
+ * Local task tabs (ul.tabs, templates/navigation/menu-local-tasks.html.twig)
+ * Primary: a sunken leather rail; the current tab is a raised plate with a
+ * brass edge, the others are small-caps labels a brass rule draws under on
+ * hover. One row: on narrow screens it scrolls sideways, edges fading out.
+ * Secondary: the same labels without the rail, on a hairline.
+ * ---------------------------------------------------------------------- */
+.pico ul.tabs {
+  display: flex;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 1.75rem;
+  padding: 0;
+  list-style: none;
+  gap: 0.25rem;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.pico ul.tabs::-webkit-scrollbar {
+  display: none;
+}
+.pico ul.tabs.primary {
+  padding: 0.3rem;
+  border: var(--kn-hairline) solid var(--kn-rule);
+  border-radius: var(--kn-radius-lg);
+  /* Tinted with the rule color: in light mode the sunken and raised
+     surfaces are the same paper. */
+  background-color: color-mix(in sRGB, var(--kn-rule) 22%, var(--kn-surface-sunken));
+  background-image: var(--kn-grain);
+  background-repeat: repeat;
+  box-shadow:
+    inset 0 1px 3px rgb(var(--kn-shadow-color) / 0.35),
+    0 1px 0 color-mix(in sRGB, var(--kn-bone) 6%, transparent);
+  /* Fade the ends when the row scrolls. */
+  mask-image: linear-gradient(to right, transparent, #000 0.6rem, #000 calc(100% - 0.6rem), transparent);
+}
+.pico ul.tabs li {
+  flex: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pico ul.tabs li::before {
+  content: none;
+}
+.pico ul.tabs a {
+  --pico-color: var(--kn-text-muted);
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0.35rem 1.05rem 0.45rem;
+  transition:
+    color var(--kn-duration) var(--kn-ease),
+    background-color var(--kn-duration) var(--kn-ease),
+    border-color var(--kn-duration) var(--kn-ease),
+    box-shadow var(--kn-duration) var(--kn-ease);
+  white-space: nowrap;
+  text-decoration: none;
+  letter-spacing: 0.09em;
+  color: var(--pico-color);
+  border: var(--kn-hairline) solid transparent;
+  border-radius: var(--kn-radius);
+  font-family: var(--kn-font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-caps: all-small-caps;
+  font-variation-settings: var(--kn-fraunces-text);
+}
+/* The brass rule: drawn out from the center on hover. */
+.pico ul.tabs a::after {
+  position: absolute;
+  height: 1px;
+  content: "";
+  transition: transform var(--kn-duration) var(--kn-ease);
+  transform: scaleX(0);
+  transform-origin: center;
+  background: var(--kn-accent);
+  inset: auto 1.05rem 0.3rem;
+}
+.pico ul.tabs a:hover {
+  --pico-color: var(--kn-accent-hover);
+}
+.pico ul.tabs a:hover::after {
+  transform: scaleX(1);
+}
+.pico ul.tabs a:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--kn-bg),
+    0 0 0 3px var(--kn-brass-bright);
+}
+
+/* The current tab: a raised plate, brass along its foot. */
+.pico ul.tabs a:is(.is-active, [aria-current="page"]) {
+  --pico-color: var(--kn-accent-text);
+
+  border-color: var(--kn-rule);
+  border-bottom-color: var(--kn-accent);
+  background-color: var(--kn-surface-raised);
+  box-shadow:
+    inset 0 1px 0 color-mix(in sRGB, var(--kn-bone) 10%, transparent),
+    inset 0 -1px 0 var(--kn-accent),
+    var(--kn-shadow-sm);
+}
+.pico ul.tabs a:is(.is-active, [aria-current="page"])::after {
+  content: none;
+}
+.pico ul.tabs a:is(.is-active, [aria-current="page"])::before {
+  flex: none;
+  width: 0.32rem;
+  height: 0.32rem;
+  margin-inline-end: 0.55rem;
+  content: "";
+  transform: rotate(45deg) translateY(0.04rem);
+  background: var(--kn-accent);
+}
+
+/* Secondary: lighter, no rail. */
+.pico ul.tabs.secondary {
+  gap: 0.15rem;
+  margin-top: -0.75rem;
+  border-bottom: var(--kn-hairline) solid var(--kn-rule-faint);
+}
+.pico ul.tabs.secondary a {
+  min-height: 2rem;
+  padding-inline: 0.8rem;
+  font-size: 0.9rem;
+}
+.pico ul.tabs.secondary a::after {
+  inset-inline: 0.8rem;
+  bottom: -1px;
+}
+.pico ul.tabs.secondary a:is(.is-active, [aria-current="page"]) {
+  border-color: transparent;
+  background: none;
+  box-shadow: inset 0 -2px 0 var(--kn-accent);
+}
+.pico ul.tabs.secondary a:is(.is-active, [aria-current="page"])::before {
+  content: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pico ul.tabs a,
+  .pico ul.tabs a::after {
+    transition: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
+ * Breadcrumb (nav.breadcrumb > ol)
+ * ---------------------------------------------------------------------- */
+.pico .breadcrumb {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+.pico .breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pico .breadcrumb li {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  list-style: none;
+  letter-spacing: 0.08em;
+  color: var(--kn-text-muted);
+  font-variant-caps: all-small-caps;
+}
+.pico .breadcrumb li + li::before {
+  content: "❧";
+  margin-inline: 0.45rem 0.55rem;
+  color: var(--kn-accent-text);
+  font-size: 0.85em;
+  font-variant-caps: normal;
+}
+.pico .breadcrumb a {
+  --pico-color: var(--kn-text);
+
+  text-decoration-color: var(--kn-rule);
+}
+
+/* -------------------------------------------------------------------------
+ * Pager (nav.pager > ul.pager__items)
+ * ---------------------------------------------------------------------- */
+.pico nav.pager {
+  display: block;
+  margin-block: 2rem;
+}
+.pico .pager ul.pager__items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pico .pager__item {
+  margin: 0;
+  list-style: none;
+}
+.pico .pager__item a {
+  --pico-color: var(--kn-text);
+
+  display: grid;
+  place-items: center;
+  min-width: 2.4rem;
+  height: 2.4rem;
+  padding: 0 0.6rem;
+  transition:
+    background-color var(--kn-duration) var(--kn-ease),
+    border-color var(--kn-duration) var(--kn-ease);
+  text-decoration: none;
+  border: 1px solid var(--kn-rule);
+  border-radius: 50%;
+  font-family: var(--kn-font-display);
+  font-weight: 600;
+}
+.pico .pager__item a:hover {
+  border-color: var(--kn-accent);
+  background: color-mix(in sRGB, var(--kn-accent) 12%, transparent);
+}
+.pico .pager__item.is-active a,
+.pico .pager__item a[aria-current="page"] {
+  --pico-color: var(--kn-lampblack);
+
+  border-color: color-mix(in sRGB, var(--kn-brass) 70%, black);
+  background: radial-gradient(circle at 35% 30%, color-mix(in sRGB, var(--kn-brass) 60%, white), var(--kn-brass) 50%, color-mix(in sRGB, var(--kn-brass) 85%, black));
+  box-shadow: 0 1px 2px rgb(0, 0, 0, 0.4);
+}
+.pico :is(.pager__item--first, .pager__item--previous, .pager__item--next, .pager__item--last) a {
+  letter-spacing: 0.08em;
+  border-radius: 999px;
+  font-family: var(--kn-font-body);
+  font-variant-caps: all-small-caps;
+}
+
+/* -------------------------------------------------------------------------
+ * Tables – a ledger: small-caps heads over a double gilt rule.
+ * ---------------------------------------------------------------------- */
+.pico table {
+  font-variant-numeric: oldstyle-nums tabular-nums;
+}
+.pico :is(th, td) {
+  padding: 0.65rem 0.8rem;
+  border-bottom: 1px solid var(--kn-rule-faint);
+}
+.pico thead th,
+.pico thead td {
+  letter-spacing: 0.1em;
+  color: var(--kn-accent-text);
+  border-bottom: 3px double var(--kn-rule-strong);
+  font-family: var(--kn-font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-variant-caps: all-small-caps;
+}
+.pico tfoot :is(th, td) {
+  border-top: 1px solid var(--kn-rule-strong);
+  border-bottom: 0;
+  font-weight: 600;
+}
+.pico tbody tr {
+  transition: background-color var(--kn-duration) var(--kn-ease);
+}
+.pico tbody tr:hover {
+  background: color-mix(in sRGB, var(--kn-accent) 6%, transparent);
+}
+.pico caption {
+  padding-bottom: 0.5rem;
+  text-align: start;
+  color: var(--kn-text-muted);
+  font-style: italic;
+}
+/* Wrap wide tables so the page never scrolls sideways. */
+.pico .table-responsive,
+.pico .views-table-wrapper {
+  overflow-x: auto;
+}
+
+/* -------------------------------------------------------------------------
+ * Node meta ("Submitted by … on …")
+ * ---------------------------------------------------------------------- */
+.pico .node__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.08em;
+  color: var(--kn-text-muted);
+  font-size: 0.9rem;
+  gap: 0.5rem;
+  font-variant-caps: all-small-caps;
+}
+.pico .node__meta::before {
+  width: 2rem;
+  height: 1px;
+  content: "";
+  background: var(--kn-accent);
+}
+
+/* Author picture: a small round portrait, without Pico's article card. */
+.pico .node__author-picture article {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+.pico .node__author-picture img {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--kn-rule-strong);
+}
+
+/* Field labels (label display "above"/"inline") */
+.pico .field__label {
+  letter-spacing: 0.12em;
+  color: var(--kn-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-variant-caps: all-small-caps;
+}
+.pico .field--label-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Taxonomy term links as brass-edged book labels. */
+.pico .field--type-entity-reference.field--name-field-tags .field__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.pico .field--name-field-tags .field__item a {
+  --pico-color: var(--kn-accent-text);
+
+  display: inline-block;
+  padding: 0.1rem 0.6rem 0.15rem;
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  border: 1px solid var(--kn-rule);
+  border-radius: 2px;
+  font-size: 0.85rem;
+  font-variant-caps: all-small-caps;
+}
+.pico .field--name-field-tags .field__item a:hover {
+  border-color: var(--kn-accent);
+  background: color-mix(in sRGB, var(--kn-accent) 10%, transparent);
+}

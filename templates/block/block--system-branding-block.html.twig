@@ -1,0 +1,45 @@
+{#
+/**
+ * @file
+ * Site branding: logo, site name in the display face, slogan in italic.
+ *
+ * With the "roundel" logo style the logo is cropped to a circle in a brass
+ * ring; "plain" shows it as uploaded. If a light scheme logo is set, both
+ * images are printed and layout.css shows the one for the scheme in use.
+ *
+ * Extra variables (knowles_preprocess_block__system_branding_block()):
+ * - logo_style: 'roundel' or 'plain'.
+ * - site_logo_light: URL of the light scheme logo, or NULL.
+ *
+ * @see block--system-branding-block.html.twig in stable9.
+ */
+#}
+{%
+  set logo_classes = [
+    'site-logo',
+    'site-logo--' ~ logo_style,
+    site_logo_light ? 'site-logo--has-light',
+  ]
+%}
+<div{{ attributes.addClass('site-branding') }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+  {% if site_logo %}
+    <a href="{{ path('<front>') }}" rel="home" class="{{ logo_classes|join(' ')|trim }}">
+      <img src="{{ site_logo }}" alt="{{ 'Home'|t }}" class="site-logo__img site-logo__img--dark" fetchpriority="high">
+      {% if site_logo_light %}
+        <img src="{{ site_logo_light }}" alt="{{ 'Home'|t }}" class="site-logo__img site-logo__img--light">
+      {% endif %}
+    </a>
+  {% endif %}
+  {% if site_name or site_slogan %}
+    <div class="site-branding__text">
+      {% if site_name %}
+        <a href="{{ path('<front>') }}" rel="home" class="site-branding__name">{{ site_name }}</a>
+      {% endif %}
+      {% if site_slogan %}
+        <span class="site-branding__slogan">{{ site_slogan }}</span>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>

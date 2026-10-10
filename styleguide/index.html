@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<!--
+  Knowles – static style guide.
+  Open this file in a browser (or serve the theme folder) to review every
+  component outside Drupal. Markup mirrors what Drupal 11 / stable9 and this
+  theme's templates output. Append ?scheme=light to preview the parchment scheme.
+-->
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Knowles – Style Guide</title>
+  <script>
+    // Preview helper only: ?scheme=light switches the page scheme.
+    if (new URLSearchParams(location.search).get('scheme') === 'light') {
+      document.documentElement.dataset.theme = 'light';
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Lora:ital,wght@0,400..700;1,400..700&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.conditional.min.css" integrity="sha384-QfeWAE0GpftbPGpYsRxM9hV8glCwhQEin0VM1Nb3eiisL9ayUJiRyy2Db6kANFsn" crossorigin="anonymous">
+  <link rel="stylesheet" href="../css/base/tokens.css">
+  <link rel="stylesheet" href="../css/base/base.css">
+  <link rel="stylesheet" href="../css/layout/layout.css">
+  <link rel="stylesheet" href="../css/components/buttons.css">
+  <link rel="stylesheet" href="../css/components/forms.css">
+  <link rel="stylesheet" href="../css/components/media.css">
+  <link rel="stylesheet" href="../css/components/cards.css">
+  <link rel="stylesheet" href="../css/components/quotes.css">
+  <link rel="stylesheet" href="../css/components/drupal.css">
+  <link rel="stylesheet" href="../css/components/search.css">
+  <style>
+    /* Style-guide-only helpers. */
+    /* Copy of Drupal core's hidden.module.css (loaded by Drupal, not here). */
+    .visually-hidden { position: absolute !important; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); width: 1px; height: 1px; word-wrap: normal; }
+    .visually-hidden.focusable:is(:active, :focus) { position: static !important; overflow: visible; clip: auto; width: auto; height: auto; }
+    .sg-section { margin-block: 3.5rem; }
+    .sg-row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1rem; }
+    .sg-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 0.75rem; }
+    .sg-swatch { border: 1px solid var(--kn-rule); border-radius: 3px; overflow: hidden; font-size: .8rem; background: var(--kn-surface); }
+    .sg-swatch span { display: block; height: 3.5rem; }
+    .sg-swatch p { margin: 0; padding: .4rem .6rem; }
+    .sg-swatch code { font-size: .75rem; border: 0; padding: 0; background: none; color: var(--kn-text-muted); }
+    .sg-two { display: grid; gap: 2rem; }
+    @media (min-width: 900px) { .sg-two { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+<a href="#main-content" class="skip-link visually-hidden focusable">Skip to main content</a>
+
+<div class="page pico">
+
+  <header class="site-header" role="banner">
+    <div class="site-header-bar container">
+      <div class="site-branding">
+        <a href="#" rel="home" class="site-logo site-logo--roundel"><img src="../logo.svg" alt="Home" class="site-logo__img site-logo__img--dark" width="52" height="52"></a>
+        <div class="site-branding__text">
+          <a href="#" rel="home" class="site-branding__name">The Reading Room</a>
+          <span class="site-branding__slogan">Notes from the study</span>
+        </div>
+      </div>
+      <div class="site-header-nav">
+        <nav aria-labelledby="main-menu-title">
+          <h2 class="visually-hidden" id="main-menu-title">Main navigation</h2>
+          <ul class="menu menu--main">
+            <li class="menu__item menu__item--active-trail"><a href="#" class="is-active">Articles</a></li>
+            <li class="menu__item"><a href="#">Topics</a></li>
+            <li class="menu__item"><a href="#">Portfolio</a></li>
+            <li class="menu__item"><a href="#">About</a></li>
+          </ul>
+        </nav>
+      </div>
+      <a href="#" class="site-search-button"><span class="site-search-button__label">Search</span></a>
+    </div>
+  </header>
+
+  <div class="site-main-bar" aria-hidden="true"></div>
+
+  <div class="container site-pre-content">
+    <nav class="breadcrumb" aria-labelledby="system-breadcrumb">
+      <h2 id="system-breadcrumb" class="visually-hidden">Breadcrumb</h2>
+      <ol><li><a href="#">Home</a></li><li><a href="#">Design</a></li><li>Style guide</li></ol>
+    </nav>
+  </div>
+
+  <main id="main-content" tabindex="-1" class="container site-main site-main--font-sans">
+    <div class="site-main__content">
+
+      <h1 class="page-title">The Old-World Study Kit</h1>
+      <p class="lead">A Pico CSS v2 base re-bound in espresso wood, parchment, antique brass, hunter green and oxblood. Every component below is plain semantic or Drupal markup.</p>
+
+      <ul class="tabs primary">
+        <li><a href="#" class="is-active" aria-current="page">View</a></li>
+        <li><a href="#">Edit</a></li>
+        <li><a href="#">Revisions</a></li>
+        <li><a href="#">Delete</a></li>
+      </ul>
+
+      <div data-drupal-messages class="messages-list">
+        <div role="contentinfo" aria-label="Status message" class="messages messages--status">
+          <h2 class="visually-hidden">Status message</h2>
+          <div class="messages__content">Your entry <em>On the Uses of Libraries</em> has been saved.</div>
+        </div>
+        <div role="contentinfo" aria-label="Warning message" class="messages messages--warning">
+          <h2 class="visually-hidden">Warning message</h2>
+          <div class="messages__content">This draft has not been published yet.</div>
+        </div>
+        <div role="contentinfo" aria-label="Error message" class="messages messages--error">
+          <h2 class="visually-hidden">Error message</h2>
+          <div class="messages__content" role="alert">The <em>Title</em> field is required.</div>
+        </div>
+      </div>
+
+      <!-- Icon nav grid (source site's block) -->
+      <section class="sg-section" aria-labelledby="sg-nav">
+        <h2 id="sg-nav">Cabinet navigation</h2>
+        <div class="nav-grid">
+          <a class="nav-grid__item" href="#"><span class="nav-grid__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span><span class="nav-grid__label">Writing</span><span class="nav-grid__desc">Articles and notes</span></a>
+          <a class="nav-grid__item" href="#"><span class="nav-grid__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span><span class="nav-grid__label">Portfolio</span><span class="nav-grid__desc">Selected work</span></a>
+          <a class="nav-grid__item" href="#"><span class="nav-grid__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="nav-grid__label">CV</span><span class="nav-grid__desc">Experience and skills</span></a>
+          <a class="nav-grid__item" href="#"><span class="nav-grid__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span><span class="nav-grid__label">Contact</span><span class="nav-grid__desc">Get in touch</span></a>
+        </div>
+      </section>
+
+      <!-- Palette -->
+      <section class="sg-section" aria-labelledby="sg-palette">
+        <h2 id="sg-palette">Palette</h2>
+        <div class="sg-swatches">
+          <div class="sg-swatch"><span style="background:#1c1816"></span><p>Espresso<br><code>#1c1816</code></p></div>
+          <div class="sg-swatch"><span style="background:#2b2421"></span><p>Tobacco<br><code>#2b2421</code></p></div>
+          <div class="sg-swatch"><span style="background:#f4f0ea"></span><p>Parchment<br><code>#f4f0ea</code></p></div>
+          <div class="sg-swatch"><span style="background:#c5a059"></span><p>Antique brass<br><code>#c5a059</code></p></div>
+          <div class="sg-swatch"><span style="background:#3a4f41"></span><p>Hunter green<br><code>#3a4f41</code></p></div>
+          <div class="sg-swatch"><span style="background:#5c2c2e"></span><p>Oxblood<br><code>#5c2c2e</code></p></div>
+          <div class="sg-swatch"><span style="background:#22201f"></span><p>Lampblack<br><code>#22201f</code></p></div>
+          <div class="sg-swatch"><span style="background:#e3ded8"></span><p>Bone<br><code>#e3ded8</code></p></div>
+        </div>
+      </section>
+
+      <!-- Typography -->
+      <section class="sg-section text-content" aria-labelledby="sg-type">
+        <hgroup>
+          <h2 id="sg-type">Typography</h2>
+          <p>Fraunces for display, Lora for reading.</p>
+        </hgroup>
+        <h1>Heading one, in Fraunces</h1>
+        <h2>Heading two: notes from the desk</h2>
+        <h3>Heading three</h3>
+        <h4>Heading four</h4>
+        <h5>Heading five – engraved label</h5>
+        <p class="drop-cap">A good bookshelf says a lot about its owner. The spines face outward, and so do the owner's interests: here <a href="#">a well-thumbed field guide</a>, there a cookbook with the corners turned. Body copy is set in <strong>Lora</strong> at a comfortable measure, with <em>true italics</em>, <mark>highlighted passages</mark>, <abbr title="Nota bene">N.B.</abbr> abbreviations and <code>inline code</code>.</p>
+        <p>Keyboard shortcuts appear as <kbd>Ctrl</kbd> + <kbd>S</kbd>; <small>small print reads in small capitals</small>; <del>struck words</del> and <ins>inserted words</ins> use the oxblood and hunter dyes.</p>
+        <hr>
+        <div class="sg-two">
+          <ul><li>Leather-bound volumes</li><li>Brass reading lamps</li><li>Maps of forgotten counties</li></ul>
+          <ol><li>Read the primary source</li><li>Take notes in the margin</li><li>Write it up</li></ol>
+        </div>
+      </section>
+
+      <!-- Buttons -->
+      <section class="sg-section" aria-labelledby="sg-buttons">
+        <h2 id="sg-buttons">Buttons</h2>
+        <div class="sg-row">
+          <button>Primary brass</button>
+          <button class="secondary">Secondary leather</button>
+          <button class="contrast">Oxblood</button>
+          <button class="outline">Outline</button>
+          <button class="outline secondary">Outline green</button>
+          <button class="outline contrast">Outline oxblood</button>
+        </div>
+        <div class="sg-row">
+          <input type="submit" class="button button--primary js-form-submit form-submit" value="Save">
+          <input type="submit" class="button js-form-submit form-submit button--secondary" value="Preview">
+          <input type="submit" class="button button--danger" value="Delete">
+          <a href="#" class="button button--small">Small link button</a>
+          <a href="#" role="button" class="button--large">Large</a>
+          <button disabled>Disabled</button>
+        </div>
+      </section>
+
+      <!-- Forms -->
+      <section class="sg-section" aria-labelledby="sg-forms">
+        <h2 id="sg-forms">Form elements</h2>
+        <div class="sg-two">
+          <form onsubmit="return false">
+            <div class="js-form-item form-item js-form-type-textfield form-type-textfield form-item-title">
+              <label for="edit-title" class="js-form-required form-required">Title</label>
+              <input type="text" id="edit-title" name="title" class="form-text required" placeholder="On the Uses of Libraries" required aria-describedby="edit-title--description">
+              <div id="edit-title--description" class="description">A plain, honest title. Fraunces will do the rest.</div>
+            </div>
+            <div class="js-form-item form-item form-type-email">
+              <label for="edit-mail" class="form-required">Correspondence address</label>
+              <input type="email" id="edit-mail" class="form-email error" value="not-an-address" aria-invalid="true">
+              <div class="form-item--error-message">Please enter a valid e-mail address.</div>
+            </div>
+            <div class="js-form-item form-item form-type-select">
+              <label for="edit-shelf">Shelf</label>
+              <select id="edit-shelf" class="form-select">
+                <option>Philosophy</option><option>History</option><option>Theology</option><option>Natural science</option>
+              </select>
+            </div>
+            <div class="js-form-item form-item form-type-textarea">
+              <label for="edit-body">Journal entry</label>
+              <textarea id="edit-body" rows="5" class="form-textarea">Tuesday. Rain on the windows. Finished the second volume of the Decline and Fall; Gibbon remains the best company in the house.</textarea>
+            </div>
+            <div class="js-form-item form-item form-type-search">
+              <label for="edit-search">Search the catalog</label>
+              <input type="search" id="edit-search" class="form-search" placeholder="Author, title or subject">
+            </div>
+          </form>
+
+          <form onsubmit="return false">
+            <fieldset class="js-form-item form-item js-form-wrapper form-wrapper">
+              <legend><span class="fieldset-legend">Binding</span></legend>
+              <div class="fieldset-wrapper">
+                <fieldset class="fieldgroup form-composite js-form-item form-item js-form-wrapper form-wrapper">
+                  <legend><span class="fieldset-legend">Leather</span></legend>
+                  <div class="fieldset-wrapper">
+                    <div class="form-radios">
+                      <div class="js-form-item form-item js-form-type-radio form-type-radio"><input type="radio" id="r1" name="leather" class="form-radio" checked><label for="r1" class="option">Oxblood morocco</label></div>
+                      <div class="js-form-item form-item js-form-type-radio form-type-radio"><input type="radio" id="r2" name="leather" class="form-radio"><label for="r2" class="option">Hunter calf</label></div>
+                      <div class="js-form-item form-item js-form-type-radio form-type-radio"><input type="radio" id="r3" name="leather" class="form-radio"><label for="r3" class="option">Tobacco goatskin</label></div>
+                    </div>
+                  </div>
+                </fieldset>
+                <div class="form-checkboxes">
+                  <div class="js-form-item form-item js-form-type-checkbox form-type-checkbox"><input type="checkbox" id="c1" class="form-checkbox" checked><label for="c1" class="option">Gilt edges</label></div>
+                  <div class="js-form-item form-item js-form-type-checkbox form-type-checkbox"><input type="checkbox" id="c2" class="form-checkbox"><label for="c2" class="option">Silk ribbon marker</label>
+                    <div class="description">A single ribbon, sewn into the headband.</div></div>
+                  <div class="js-form-item form-item js-form-type-checkbox form-type-checkbox"><input type="checkbox" id="c3" class="form-checkbox" role="switch" checked><label for="c3" class="option">Slipcase (switch)</label></div>
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="js-form-item form-item form-type-managed-file">
+              <label for="edit-file">Frontispiece</label>
+              <div class="js-form-managed-file form-managed-file">
+                <input type="file" id="edit-file" class="js-form-file form-file" accept="image/*">
+              </div>
+              <div class="description">One file only. 2 MB limit. Allowed types: png gif jpg jpeg.</div>
+            </div>
+
+            <label for="edit-range">Lamp brightness</label>
+            <input type="range" id="edit-range" value="60">
+
+            <details class="js-form-wrapper form-wrapper">
+              <summary>Advanced options</summary>
+              <p>Collapsible Drupal <code>details</code> element.</p>
+            </details>
+
+            <div class="form-actions js-form-wrapper form-wrapper">
+              <input type="submit" class="button button--primary form-submit" value="Save">
+              <input type="submit" class="button form-submit button--secondary" value="Preview">
+              <a href="#">Cancel</a>
+            </div>
+          </form>
+        </div>
+
+        <h3>A form on letterhead</h3>
+        <form class="form--parchment" onsubmit="return false">
+          <div class="grid">
+            <div class="form-item"><label for="p-name" class="form-required">Name</label><input id="p-name" type="text" placeholder="Your name"></div>
+            <div class="form-item"><label for="p-mail">E-mail</label><input id="p-mail" type="email" placeholder="you@example.com"></div>
+          </div>
+          <div class="form-item"><label for="p-msg">Message</label><textarea id="p-msg" rows="4" placeholder="Dear sir…"></textarea></div>
+          <div class="form-type-checkbox"><input type="checkbox" id="p-copy" checked><label for="p-copy" class="option">Send me a copy</label></div>
+          <div class="form-actions"><button type="submit">Send letter</button><button type="button" class="outline">Save draft</button></div>
+        </form>
+      </section>
+
+      <!-- Media -->
+      <section class="sg-section" aria-labelledby="sg-media">
+        <h2 id="sg-media">Images &amp; media</h2>
+        <div class="sg-two">
+          <figure class="frame--map frame--cornered">
+            <img src="img/map.svg" alt="Hand-drawn map of a coastline with three towns and a compass rose" width="600" height="380">
+            <figcaption>Plate IV · The Western Shires, 1788</figcaption>
+          </figure>
+          <div class="print-gallery">
+            <figure class="frame--polaroid">
+              <img src="img/study.svg" alt="Bookshelves lit by a brass lamp" width="400" height="400">
+              <figcaption>The north wall, autumn</figcaption>
+            </figure>
+            <figure class="frame--polaroid">
+              <img src="img/chair.svg" alt="An oxblood wingback chair" width="400" height="400">
+              <figcaption>Grandfather's chair</figcaption>
+            </figure>
+          </div>
+        </div>
+        <div class="text-content">
+          <figure role="group" class="caption caption-img">
+            <img src="img/study.svg" alt="Bookshelves lit by a brass lamp" width="400" height="400" style="max-width: 20rem">
+            <figcaption>Default content image (CKEditor 5 caption markup).</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- Cards -->
+      <section class="sg-section" aria-labelledby="sg-cards">
+        <h2 id="sg-cards">Cards</h2>
+        <div class="card-grid">
+          <article class="card card--book">
+            <header><p class="card__kicker">Vol. I</p><h3 class="card__title">Reflections on the Revolution</h3></header>
+            <p>Leather-bound volume in oxblood with a ribbed spine, gilt tooling and a page block.</p>
+            <footer><a href="#">Take down from the shelf</a></footer>
+          </article>
+          <article class="card card--book card--hunter">
+            <header><p class="card__kicker">Vol. II</p><h3 class="card__title">Orthodoxy</h3></header>
+            <p>The same binding in hunter calf. Add <code>.card--hunter</code> or <code>.card--tobacco</code>.</p>
+            <footer><a href="#">Read on</a></footer>
+          </article>
+          <article class="card card--note card--pinned">
+            <header><p class="card__kicker">Memorandum</p><h3 class="card__title">A note to self</h3></header>
+            <p>Parchment note with a folded corner and a brass pin. It switches to the light tokens automatically.</p>
+            <footer><a href="#">Mark as done</a></footer>
+          </article>
+          <article class="card card--linked">
+            <header><p class="card__kicker">Essay</p><h3 class="card__title"><a href="#">Default card (desk blotter)</a></h3></header>
+            <p>Pico's <code>&lt;article&gt;</code> in tobacco leather. With <code>.card--linked</code>, the whole card is clickable.</p>
+            <footer><small>12 minutes’ reading</small></footer>
+          </article>
+        </div>
+      </section>
+
+      <!-- Quotes -->
+      <section class="sg-section text-content" aria-labelledby="sg-quotes">
+        <h2 id="sg-quotes">Blockquotes &amp; callouts</h2>
+        <blockquote>
+          <p>Society is indeed a contract… a partnership not only between those who are living, but between those who are living, those who are dead, and those who are to be born.</p>
+          <footer>— <cite>Edmund Burke</cite>, Reflections on the Revolution in France, 1790</footer>
+        </blockquote>
+        <blockquote class="pull-quote">
+          <p>Tradition means giving votes to the most obscure of all classes, our ancestors.</p>
+          <footer>— <cite>G. K. Chesterton</cite></footer>
+        </blockquote>
+        <aside class="callout" role="note"><p class="callout__title">Nota bene</p><p>A brass marginal note for asides and definitions.</p></aside>
+        <aside class="callout callout--tip" role="note"><p class="callout__title">From the archivist</p><p>Hunter green for tips and recommendations.</p></aside>
+        <aside class="callout callout--warning" role="note"><p class="callout__title">Caveat lector</p><p>Oxblood for warnings the reader shouldn't skip.</p></aside>
+      </section>
+
+      <!-- Table & pager -->
+      <section class="sg-section" aria-labelledby="sg-table">
+        <h2 id="sg-table">Ledger table &amp; pager</h2>
+        <div class="table-responsive">
+          <table>
+            <caption>Acquisitions, Michaelmas term</caption>
+            <thead><tr><th scope="col">Title</th><th scope="col">Author</th><th scope="col">Year</th><th scope="col">Price</th></tr></thead>
+            <tbody>
+              <tr><td>The Decline and Fall</td><td>Gibbon</td><td>1776</td><td>£12.50</td></tr>
+              <tr><td>Leviathan</td><td>Hobbes</td><td>1651</td><td>£8.00</td></tr>
+              <tr><td>The Abolition of Man</td><td>Lewis</td><td>1943</td><td>£4.75</td></tr>
+            </tbody>
+            <tfoot><tr><th scope="row" colspan="3">Total</th><td>£25.25</td></tr></tfoot>
+          </table>
+        </div>
+        <nav class="pager" role="navigation" aria-labelledby="pagination-heading">
+          <h4 id="pagination-heading" class="visually-hidden">Pagination</h4>
+          <ul class="pager__items js-pager__items">
+            <li class="pager__item pager__item--previous"><a href="#" rel="prev">‹ Previous</a></li>
+            <li class="pager__item"><a href="#">1</a></li>
+            <li class="pager__item is-active"><a href="#" aria-current="page">2</a></li>
+            <li class="pager__item"><a href="#">3</a></li>
+            <li class="pager__item pager__item--next"><a href="#" rel="next">Next ›</a></li>
+          </ul>
+        </nav>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="site-footer__inner container">
+      <div class="site-footer__brand">
+        <p class="site-footer__powered">
+          <img src="https://www.drupal.org/files/druplicon-small.png" alt="Drupal" class="site-footer__druplicon" width="18" height="20" loading="lazy" onerror="this.remove()">
+          Theme: <span class="site-footer__theme-name">Knowles</span> based on <a href="https://picocss.com/">Pico</a>
+        </p>
+      </div>
+      <div class="site-footer__right">
+        <div class="site-footer__links">
+          <div class="site-footer__link-col"><nav aria-labelledby="f1"><h2 id="f1">About</h2><ul class="menu"><li><a href="#">Home</a></li><li><a href="#">About</a></li><li><a href="#">Projects</a></li></ul></nav></div>
+          <div class="site-footer__link-col"><nav aria-labelledby="f2"><h2 id="f2">Connect</h2><ul class="menu"><li><a href="#">Contact</a></li></ul></nav></div>
+          <div class="site-footer__link-col"><nav aria-labelledby="f3"><h2 id="f3">Services</h2><ul class="menu"><li><a href="#">Consulting</a></li><li><a href="#">Speaking</a></li></ul></nav></div>
+        </div>
+        <div class="site-footer__legal">
+          <span class="site-footer__copyright">&copy; 2026 The Reading Room. All rights reserved.</span>
+          <a href="#">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+</body>
+</html>

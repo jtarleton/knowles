@@ -1,0 +1,14 @@
+{#
+/**
+ * @file
+ * Header region: branding, main menu and account menu on one line.
+ *
+ * The class is what lays them out (layout.css, "Header row"); stable9's
+ * region.html.twig prints a bare <div>, which stacked the three blocks.
+ */
+#}
+{% if content %}
+  <div{{ attributes.addClass('site-header-region') }}>
+    {{ content }}
+  </div>
+{% endif %}

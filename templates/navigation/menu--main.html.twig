@@ -1,0 +1,17 @@
+{#
+/**
+ * @file
+ * Main menu: a single row of small-caps links (Pico's <nav><ul> pattern).
+ * Only the top level is shown in the header bar; the active trail gets a
+ * brass plate (see "Header navigation" in layout.css).
+ */
+#}
+{% if items %}
+  <ul{{ attributes.addClass('menu', 'menu--main') }}>
+    {% for item in items %}
+      <li{{ item.attributes.addClass('menu__item', item.in_active_trail ? 'menu__item--active-trail') }}>
+        {{ link(item.title, item.url, item.in_active_trail ? {'class': ['is-active']} : {}) }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

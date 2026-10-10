@@ -1,0 +1,26 @@
+{
+    "name": "drupal/knowles",
+    "description": "A warm, old-world blog theme on Pico CSS v2, with dark and light color schemes and configurable colors, fonts, logo, search and footer.",
+    "type": "drupal-theme",
+    "license": "GPL-2.0-or-later",
+    "keywords": [
+        "Drupal",
+        "theme",
+        "blog",
+        "pico css",
+        "dark mode"
+    ],
+    "homepage": "https://www.drupal.org/project/knowles",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/knowles",
+        "source": "https://git.drupalcode.org/project/knowles"
+    },
+    "require": {
+        "php": ">=8.1",
+        "drupal/core": "^10.3 || ^11"
+    },
+    "suggest": {
+        "drupal/html_mail": "Branded HTML emails using the theme's template and colors.",
+        "drupal/search_api": "Search with autocomplete in the theme's search modal."
+    }
+}

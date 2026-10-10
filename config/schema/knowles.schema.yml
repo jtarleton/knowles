@@ -1,0 +1,69 @@
+knowles.settings:
+  type: theme_settings
+  label: 'Knowles settings'
+  mapping:
+    color_scheme_mode:
+      type: string
+      label: 'Color scheme'
+      constraints:
+        Choice:
+          - auto
+          - dark
+          - light
+    logo_style:
+      type: string
+      label: 'Logo style'
+      constraints:
+        Choice:
+          - roundel
+          - plain
+    logo_light_path:
+      type: string
+      label: 'Logo for the light scheme'
+    web_fonts:
+      type: boolean
+      label: 'Load web fonts'
+    content_font:
+      type: string
+      label: 'Content font'
+      constraints:
+        Choice:
+          - sans
+          - serif
+    custom_colors:
+      type: boolean
+      label: 'Use custom colors'
+    colors:
+      type: mapping
+      label: 'Colors'
+      mapping:
+        accent:
+          type: color_hex
+          label: 'Accent'
+        secondary:
+          type: color_hex
+          label: 'Secondary'
+        contrast:
+          type: color_hex
+          label: 'Contrast'
+    search_button:
+      type: boolean
+      label: 'Show a search button in the header'
+    search_modal:
+      type: boolean
+      label: 'Open search in a modal'
+    search_path:
+      type: path
+      label: 'Search page path'
+    search_label:
+      type: label
+      label: 'Search button label'
+    search_title:
+      type: label
+      label: 'Search modal heading'
+    footer_copyright:
+      type: text
+      label: 'Footer copyright text'
+    theme_credit:
+      type: boolean
+      label: 'Show the theme credit in the footer'

@@ -1,0 +1,73 @@
+# ---------------------------------------------------------------------------
+# Libraries
+#
+# CSS groups load in SMACSS order (base -> layout -> component -> state ->
+# theme), so Pico in "base" is always overridden by the kit in "theme".
+# ---------------------------------------------------------------------------
+
+# Google Fonts: Fraunces (variable: opsz, wght, SOFT, WONK; roman + italic)
+# for display type and Lora (variable wght; roman + italic) for body text.
+# Optional: see the "Load web fonts" theme setting.
+fonts:
+  remote: https://fonts.google.com
+  license:
+    name: SIL Open Font License 1.1
+    url: https://openfontlicense.org
+    gpl-compatible: true
+  css:
+    base:
+      'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Lora:ital,wght@0,400..700;1,400..700&display=swap':
+        type: external
+        minified: true
+
+# Pico CSS v2, "conditional" build: element styles only apply inside
+# `.pico`, so the Drupal admin toolbar, contextual links and off-canvas
+# dialogs keep their own styling. page.html.twig adds the `.pico` wrapper.
+pico:
+  remote: https://picocss.com
+  version: 2.1.1
+  license:
+    name: MIT
+    url: https://github.com/picocss/pico/blob/main/LICENSE.md
+    gpl-compatible: true
+  css:
+    base:
+      'https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.conditional.min.css':
+        type: external
+        minified: true
+        weight: -100
+        attributes:
+          integrity: 'sha384-QfeWAE0GpftbPGpYsRxM9hV8glCwhQEin0VM1Nb3eiisL9ayUJiRyy2Db6kANFsn'
+          crossorigin: anonymous
+
+# The UI kit. Files are split by concern; Drupal's aggregation bundles them.
+global:
+  version: VERSION
+  css:
+    theme:
+      css/base/tokens.css: {}
+      css/base/base.css: {}
+      css/layout/layout.css: {}
+      css/components/buttons.css: {}
+      css/components/forms.css: {}
+      css/components/media.css: {}
+      css/components/cards.css: {}
+      css/components/quotes.css: {}
+      css/components/drupal.css: {}
+      css/components/search.css: {}
+      css/components/login.css: {}
+  dependencies:
+    - knowles/pico
+
+# Search modal: the header search button (or any link with the class
+# `js-search-modal-trigger`) opens a <dialog> holding whatever is placed in
+# the "Search modal" region. Attached from page.html.twig only when the
+# "Open search in a modal" theme setting is on and the region has content.
+search-modal:
+  version: VERSION
+  js:
+    js/search-modal.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - knowles/global

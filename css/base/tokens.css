@@ -1,0 +1,396 @@
+/**
+ * @file
+ * Design tokens + Pico CSS v2 variable overrides.
+ *
+ * How this file is organized:
+ *   1. Palette   – raw colors from the brief (never used directly by components).
+ *   2. Schemes   – semantic --kn-* tokens for the dark "study at night" scheme
+ *                  (default), the light "parchment" scheme, and "auto"
+ *                  (2c: the same parchment tokens, applied only under
+ *                  `@media (prefers-color-scheme: light)` — for visitors
+ *                  whose OS prefers light, when knowles.settings'
+ *                  color_scheme_mode is 'auto').
+ *   3. Pico map  – every Pico color/typography variable pointed at the
+ *                  semantic tokens.
+ *
+ * Specificity note: Pico declares its light scheme on
+ * `:root:not([data-theme=dark])` (0,2,0) and its dark scheme on
+ * `[data-theme=dark]` (0,1,0). The selectors below are deliberately 0,2,0 and
+ * load after Pico (the "theme" CSS group), so they always win without
+ * resorting to !important.
+ *
+ * Nested schemes: add `data-theme="light"` (or the `.surface-parchment` class)
+ * to any element to turn it into a parchment surface inside the dark page,
+ * and vice versa with `data-theme="dark"`. The Pico map is re-declared on
+ * those elements so every derived variable resolves against the local scheme.
+ */
+
+/* -------------------------------------------------------------------------
+ * 1. Palette
+ * ---------------------------------------------------------------------- */
+:root {
+  /* Woods & leathers */
+  --kn-espresso: #1c1816; /* deepest background – the study at night */
+  --kn-tobacco: #2b2421; /* raised surfaces – aged tobacco leather */
+  --kn-walnut: #3a302b; /* hover / borders on dark */
+  --kn-walnut-deep: #231e1b; /* inset wells (inputs) on dark */
+
+  /* Papers */
+  --kn-parchment: #f4f0ea; /* light surfaces */
+  --kn-parchment-deep: #ebe4d8; /* parchment shadowed / sectioning */
+  --kn-vellum: #e0d6c4; /* parchment borders */
+
+  /* Metals & dyes */
+  --kn-brass: #c5a059; /* antique brass – the primary accent */
+  --kn-brass-bright: #d9b877; /* polished brass (hover on dark) */
+  --kn-brass-ink: #7a5a1e; /* brass readable on parchment (5.6:1) */
+  --kn-brass-ink-deep: #5e4415;
+  --kn-hunter: #3a4f41; /* muted hunter green */
+  --kn-hunter-deep: #2c3d32;
+  --kn-hunter-light: #8fb39a; /* green readable on espresso */
+  --kn-oxblood: #5c2c2e; /* oxblood / deep burgundy */
+  --kn-oxblood-deep: #4a2224;
+  --kn-oxblood-ink: #6e1f23; /* oxblood readable on parchment */
+  --kn-oxblood-light: #d98a86; /* oxblood readable on espresso */
+
+  /* Inks */
+  --kn-lampblack: #22201f; /* body text on light */
+  --kn-bone: #e3ded8; /* body text on dark */
+  --kn-bone-muted: #a99d90; /* secondary text on dark (6.6:1) */
+  --kn-lampblack-muted: #6b6159; /* secondary text on light (5.3:1) */
+
+  /* Typography */
+  --kn-font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", palatino, georgia, serif;
+  --kn-font-body: "Lora", "Iowan Old Style", "Palatino Linotype", palatino, georgia, serif;
+  --kn-font-mono: ui-monospace, "SFMono-Regular", menlo, consolas, "Liberation Mono", monospace;
+  /* Reading-content sans, scoped to .site-main only (layout.css) — header
+     and footer keep the Fraunces/Lora pair above. Native system UI stack
+     rather than the requested "Lucida Grande", Tahoma, Verdana, Arial:
+     Lucida Grande was macOS-only pre-2014 and Tahoma/Verdana are old
+     Windows-only fallbacks, so that chain still ends up on a generic
+     `sans-serif` (whatever the OS defaults to, often serif-ish on Linux)
+     for most non-Mac/Windows visitors. This is the modern equivalent —
+     each OS's actual system UI sans, same "fast, native, no serif
+     flourish" intent, with a real sans at the end of the chain instead. */
+  --kn-font-sans: -apple-system, blinkmacsystemfont, "Segoe UI", roboto, "Helvetica Neue", arial, sans-serif;
+  /* Fraunces "SOFT" (0–100) rounds the terminals; "WONK" swaps in the
+     leaning, hand-inked alternates. Display sizes get both. */
+  --kn-fraunces-display: "SOFT" 50, "WONK" 1;
+  --kn-fraunces-text: "SOFT" 30, "WONK" 0;
+
+  /* Shape & motion */
+  --kn-radius: 3px; /* barely-there: bookbinding, not bubbles */
+  --kn-radius-lg: 5px;
+  --kn-hairline: 1px;
+  --kn-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --kn-duration: 180ms;
+
+  /* Page measure */
+  --kn-measure: 68ch;
+  --kn-container: 72rem;
+
+  /* Textures: 128px raster noise tiles (PNG data URIs, ~7KB total) – cheaper
+     to paint than SVG feTurbulence. Paper grain is warm brown, leather grain
+     black; both are alpha-only so they tint whatever sits beneath.
+     Pico sets `background-repeat: no-repeat` on every element, so any rule
+     using these with the `background-image` longhand must add
+     `background-repeat: repeat` (the `background` shorthand resets it). */
+  --kn-grain-paper: url("data:image/png;base64,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");
+  --kn-grain-leather: url("data:image/png;base64,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");
+}
+
+/* The page ground color, set only on the root so nested surfaces can
+   still "see" it (used e.g. to cut the dog-ear on parchment notes). */
+:root:root {
+  --kn-page-bg: var(--kn-espresso);
+}
+:root[data-theme="light"] {
+  --kn-page-bg: var(--kn-parchment);
+}
+
+/* Type scale: Lora reads large, so cap Pico's responsive root size lower
+   than its default (Pico goes up to 131.25%). */
+:root:root {
+  --pico-font-size: 100%;
+}
+@media (min-width: 768px) {
+  :root:root {
+    --pico-font-size: 106.25%;
+  }
+}
+@media (min-width: 1280px) {
+  :root:root {
+    --pico-font-size: 112.5%;
+  }
+}
+
+/* -------------------------------------------------------------------------
+ * 2a. Dark scheme – "The study at night" (default)
+ * ---------------------------------------------------------------------- */
+:root:root,
+:root [data-theme="dark"] {
+  --kn-bg: var(--kn-espresso);
+  --kn-surface: var(--kn-tobacco);
+  --kn-surface-sunken: var(--kn-walnut-deep);
+  --kn-surface-raised: #332a26;
+  --kn-text: var(--kn-bone);
+  --kn-text-muted: var(--kn-bone-muted);
+  --kn-heading: #efe7da;
+  --kn-accent: var(--kn-brass);
+  --kn-accent-hover: var(--kn-brass-bright);
+  --kn-accent-text: var(--kn-brass); /* brass as text/links */
+  --kn-accent-on: var(--kn-lampblack); /* text placed on brass */
+  --kn-rule: color-mix(in sRGB, var(--kn-brass) 38%, transparent); /* 1px antique-gold hairline */
+  --kn-rule-strong: color-mix(in sRGB, var(--kn-brass) 70%, transparent);
+  --kn-rule-faint: rgb(227, 222, 216, 0.1);
+  --kn-success: var(--kn-hunter-light);
+  --kn-danger: var(--kn-oxblood-light);
+  --kn-shadow-color: 12 8 6; /* rgb triplet for shadows */
+  --kn-shadow-sm: 0 1px 0 rgb(255, 240, 210, 0.04) inset, 0 1px 2px rgb(var(--kn-shadow-color) / 0.5);
+  --kn-shadow-md: 0 1px 0 rgb(255, 240, 210, 0.05) inset, 0 6px 14px -4px rgb(var(--kn-shadow-color) / 0.65), 0 2px 4px rgb(var(--kn-shadow-color) / 0.4);
+  --kn-shadow-lg: 0 1px 0 rgb(255, 240, 210, 0.05) inset, 0 18px 40px -12px rgb(var(--kn-shadow-color) / 0.8), 0 4px 10px rgb(var(--kn-shadow-color) / 0.45);
+  --kn-inset: inset 0 2px 4px rgb(var(--kn-shadow-color) / 0.6), inset 0 0 0 1px rgb(0, 0, 0, 0.25);
+  --kn-grain: var(--kn-grain-leather);
+  --kn-grain-opacity: 0.55;
+  --kn-icon-stroke: rgb(197, 160, 89); /* brass for Pico's SVG icons */
+
+  color-scheme: dark;
+}
+
+/* -------------------------------------------------------------------------
+ * 2b. Light scheme – "Parchment" (page-wide or nested surfaces)
+ * ---------------------------------------------------------------------- */
+:root[data-theme="light"],
+:root [data-theme="light"],
+:root :is(.surface-parchment, .card--note, .form--parchment) {
+  --kn-bg: var(--kn-parchment);
+  --kn-surface: #faf7f1;
+  --kn-surface-sunken: #fffdf8;
+  --kn-surface-raised: #fffdf8;
+  --kn-text: var(--kn-lampblack);
+  --kn-text-muted: var(--kn-lampblack-muted);
+  --kn-heading: #1a1715;
+  --kn-accent: var(--kn-brass);
+  --kn-accent-hover: color-mix(in sRGB, var(--kn-brass) 90%, black);
+  --kn-accent-text: var(--kn-brass-ink);
+  --kn-accent-on: var(--kn-lampblack);
+  --kn-rule: color-mix(in sRGB, var(--kn-brass-ink) 35%, transparent);
+  --kn-rule-strong: color-mix(in sRGB, var(--kn-brass-ink) 65%, transparent);
+  --kn-rule-faint: rgb(34, 32, 31, 0.1);
+  --kn-success: var(--kn-hunter);
+  --kn-danger: var(--kn-oxblood-ink);
+  --kn-shadow-color: 74 52 30;
+  --kn-shadow-sm: 0 1px 2px rgb(var(--kn-shadow-color) / 0.12);
+  --kn-shadow-md: 0 1px 1px rgb(var(--kn-shadow-color) / 0.08), 0 6px 14px -6px rgb(var(--kn-shadow-color) / 0.3);
+  --kn-shadow-lg: 0 2px 2px rgb(var(--kn-shadow-color) / 0.08), 0 20px 36px -16px rgb(var(--kn-shadow-color) / 0.45);
+  --kn-inset: inset 0 1px 3px rgb(var(--kn-shadow-color) / 0.14);
+  --kn-grain: var(--kn-grain-paper);
+  --kn-grain-opacity: 1;
+  --kn-icon-stroke: rgb(122, 90, 30);
+
+  color-scheme: light;
+}
+
+/* -------------------------------------------------------------------------
+ * 2c. Auto scheme — knowles.settings' color_scheme_mode: auto
+ *     (knowles_preprocess_html()) writes <html data-theme="auto"> rather
+ *     than picking a scheme server-side, and this is that visitor's OS
+ *     preference resolved client-side, in CSS alone: no cookie, no JS, no
+ *     per-visitor cache split, no flash of the wrong scheme on load.
+ *
+ *     Same declarations as 2b, just gated behind the media query instead
+ *     of applying unconditionally, and at matching (not higher)
+ *     specificity to 2a's dark block — same "equal specificity, later in
+ *     the file wins" mechanics as 2a/2b, since section 3 below also
+ *     already matches any element carrying *a* data-theme attribute
+ *     (selector is bare `[data-theme]`), auto included, so it needs
+ *     nothing extra to pick this up.
+ * ---------------------------------------------------------------------- */
+@media (prefers-color-scheme: light) {
+  :root[data-theme="auto"] {
+    --kn-page-bg: var(--kn-parchment);
+  }
+
+  :root[data-theme="auto"] {
+    --kn-bg: var(--kn-parchment);
+    --kn-surface: #faf7f1;
+    --kn-surface-sunken: #fffdf8;
+    --kn-surface-raised: #fffdf8;
+    --kn-text: var(--kn-lampblack);
+    --kn-text-muted: var(--kn-lampblack-muted);
+    --kn-heading: #1a1715;
+    --kn-accent: var(--kn-brass);
+    --kn-accent-hover: color-mix(in sRGB, var(--kn-brass) 90%, black);
+    --kn-accent-text: var(--kn-brass-ink);
+    --kn-accent-on: var(--kn-lampblack);
+    --kn-rule: color-mix(in sRGB, var(--kn-brass-ink) 35%, transparent);
+    --kn-rule-strong: color-mix(in sRGB, var(--kn-brass-ink) 65%, transparent);
+    --kn-rule-faint: rgb(34, 32, 31, 0.1);
+    --kn-success: var(--kn-hunter);
+    --kn-danger: var(--kn-oxblood-ink);
+    --kn-shadow-color: 74 52 30;
+    --kn-shadow-sm: 0 1px 2px rgb(var(--kn-shadow-color) / 0.12);
+    --kn-shadow-md: 0 1px 1px rgb(var(--kn-shadow-color) / 0.08), 0 6px 14px -6px rgb(var(--kn-shadow-color) / 0.3);
+    --kn-shadow-lg: 0 2px 2px rgb(var(--kn-shadow-color) / 0.08), 0 20px 36px -16px rgb(var(--kn-shadow-color) / 0.45);
+    --kn-inset: inset 0 1px 3px rgb(var(--kn-shadow-color) / 0.14);
+    --kn-grain: var(--kn-grain-paper);
+    --kn-grain-opacity: 1;
+    --kn-icon-stroke: rgb(122, 90, 30);
+
+    color-scheme: light;
+  }
+}
+
+/* -------------------------------------------------------------------------
+ * 3. Pico variable map
+ *    Declared on every scheme root so var() resolves in the right scheme.
+ * ---------------------------------------------------------------------- */
+:root:root,
+:root [data-theme],
+:root :is(.surface-parchment, .card--note, .form--parchment) {
+  /* Typography */
+  --pico-font-family: var(--kn-font-body);
+  --pico-font-family-sans-serif: var(--kn-font-body);
+  --pico-font-family-monospace: var(--kn-font-mono);
+  --pico-line-height: 1.65;
+  --pico-font-weight: 400;
+  --pico-text-underline-offset: 0.18em;
+
+  /* Shape & rhythm */
+  --pico-border-radius: var(--kn-radius);
+  --pico-border-width: var(--kn-hairline);
+  --pico-outline-width: 2px;
+  --pico-spacing: 1.125rem;
+  --pico-typography-spacing-vertical: 1.15rem;
+  --pico-block-spacing-vertical: 1.5rem;
+  --pico-block-spacing-horizontal: 1.5rem;
+  --pico-form-element-spacing-vertical: 0.7rem;
+  --pico-form-element-spacing-horizontal: 0.9rem;
+  --pico-transition: var(--kn-duration) var(--kn-ease);
+
+  /* Surfaces & text */
+  --pico-background-color: var(--kn-bg);
+  --pico-color: var(--kn-text);
+  --pico-muted-color: var(--kn-text-muted);
+  --pico-muted-border-color: var(--kn-rule-faint);
+  --pico-text-selection-color: color-mix(in sRGB, var(--kn-brass) 30%, transparent);
+  --pico-h1-color: var(--kn-heading);
+  --pico-h2-color: var(--kn-heading);
+  --pico-h3-color: var(--kn-heading);
+  --pico-h4-color: var(--kn-heading);
+  --pico-h5-color: var(--kn-heading);
+  --pico-h6-color: var(--kn-text-muted);
+
+  /* Primary = antique brass */
+  --pico-primary: var(--kn-accent-text);
+  --pico-primary-background: var(--kn-accent);
+  --pico-primary-border: var(--kn-accent);
+  --pico-primary-underline: var(--kn-rule-strong);
+  --pico-primary-hover: var(--kn-accent-hover);
+  --pico-primary-hover-background: var(--kn-accent-hover);
+  --pico-primary-hover-border: var(--kn-accent-hover);
+  --pico-primary-hover-underline: var(--kn-accent-hover);
+  --pico-primary-focus: color-mix(in sRGB, var(--kn-brass) 45%, transparent);
+  --pico-primary-inverse: var(--kn-accent-on);
+
+  /* Secondary = hunter-green leather */
+  --pico-secondary: var(--kn-success);
+  --pico-secondary-background: var(--kn-hunter);
+  --pico-secondary-border: var(--kn-hunter);
+  --pico-secondary-underline: color-mix(in sRGB, var(--kn-hunter-light) 50%, transparent);
+  --pico-secondary-hover: var(--kn-success);
+  --pico-secondary-hover-background: var(--kn-hunter-deep);
+  --pico-secondary-hover-border: var(--kn-brass);
+  --pico-secondary-hover-underline: var(--kn-success);
+  --pico-secondary-focus: color-mix(in sRGB, var(--kn-hunter-light) 40%, transparent);
+  --pico-secondary-inverse: var(--kn-bone);
+
+  /* Contrast = oxblood leather */
+  --pico-contrast: var(--kn-danger);
+  --pico-contrast-background: var(--kn-oxblood);
+  --pico-contrast-border: var(--kn-oxblood);
+  --pico-contrast-underline: var(--kn-danger);
+  --pico-contrast-hover: var(--kn-danger);
+  --pico-contrast-hover-background: var(--kn-oxblood-deep);
+  --pico-contrast-hover-border: var(--kn-brass);
+  --pico-contrast-hover-underline: var(--kn-danger);
+  --pico-contrast-focus: color-mix(in sRGB, var(--kn-oxblood-light) 40%, transparent);
+  --pico-contrast-inverse: var(--kn-bone);
+
+  /* Shadows */
+  --pico-box-shadow: var(--kn-shadow-md);
+  --pico-button-box-shadow: var(--kn-shadow-sm);
+  --pico-button-hover-box-shadow: var(--kn-shadow-md);
+
+  /* Forms */
+  --pico-form-element-background-color: var(--kn-surface-sunken);
+  --pico-form-element-selected-background-color: var(--kn-surface-raised);
+  --pico-form-element-border-color: var(--kn-rule);
+  --pico-form-element-color: var(--kn-text);
+  --pico-form-element-placeholder-color: var(--kn-text-muted);
+  --pico-form-element-active-background-color: var(--kn-surface-sunken);
+  --pico-form-element-active-border-color: var(--kn-accent);
+  --pico-form-element-focus-color: color-mix(in sRGB, var(--kn-brass) 35%, transparent);
+  --pico-form-element-disabled-opacity: 0.5;
+  --pico-form-element-invalid-border-color: var(--kn-danger);
+  --pico-form-element-invalid-active-border-color: var(--kn-danger);
+  --pico-form-element-invalid-focus-color: color-mix(in sRGB, var(--kn-oxblood-light) 30%, transparent);
+  --pico-form-element-valid-border-color: var(--kn-success);
+  --pico-form-element-valid-active-border-color: var(--kn-success);
+  --pico-form-element-valid-focus-color: color-mix(in sRGB, var(--kn-hunter-light) 30%, transparent);
+  --pico-form-label-font-weight: 600;
+  --pico-switch-background-color: var(--kn-walnut);
+  --pico-switch-checked-background-color: var(--kn-hunter);
+  --pico-switch-color: var(--kn-brass);
+  --pico-switch-thumb-box-shadow: 0 1px 2px rgb(0, 0, 0, 0.4);
+  --pico-range-border-color: var(--kn-rule);
+  --pico-range-active-border-color: var(--kn-rule-strong);
+  --pico-range-thumb-border-color: var(--kn-bg);
+  --pico-range-thumb-color: var(--kn-accent);
+  --pico-range-thumb-active-color: var(--kn-accent-hover);
+
+  /* Cards, tables, misc */
+  --pico-card-background-color: var(--kn-surface);
+  --pico-card-border-color: var(--kn-rule);
+  --pico-card-box-shadow: var(--kn-shadow-md);
+  --pico-card-sectioning-background-color: color-mix(in sRGB, var(--kn-surface) 80%, var(--kn-bg));
+  --pico-dropdown-background-color: var(--kn-surface-raised);
+  --pico-dropdown-border-color: var(--kn-rule);
+  --pico-dropdown-box-shadow: var(--kn-shadow-lg);
+  --pico-dropdown-color: var(--kn-text);
+  --pico-dropdown-hover-background-color: color-mix(in sRGB, var(--kn-accent) 14%, transparent);
+  --pico-accordion-border-color: var(--kn-rule);
+  --pico-accordion-active-summary-color: var(--kn-accent-text);
+  --pico-accordion-close-summary-color: var(--kn-text);
+  --pico-accordion-open-summary-color: var(--kn-text-muted);
+  --pico-blockquote-border-color: var(--kn-accent);
+  --pico-blockquote-footer-color: var(--kn-text-muted);
+  --pico-table-border-color: var(--kn-rule);
+  --pico-table-row-stripped-background-color: color-mix(in sRGB, var(--kn-accent) 6%, transparent);
+  --pico-code-background-color: var(--kn-surface-sunken);
+  --pico-code-color: var(--kn-text);
+  --pico-code-kbd-background-color: var(--kn-text);
+  --pico-code-kbd-color: var(--kn-bg);
+  --pico-mark-background-color: color-mix(in sRGB, var(--kn-brass) 35%, transparent);
+  --pico-mark-color: inherit;
+  --pico-ins-color: var(--kn-success);
+  --pico-del-color: var(--kn-danger);
+  --pico-progress-background-color: var(--kn-surface-sunken);
+  --pico-progress-color: var(--kn-accent);
+  --pico-tooltip-background-color: var(--kn-lampblack);
+  --pico-tooltip-color: var(--kn-bone);
+  --pico-modal-overlay-background-color: rgb(18, 14, 12, 0.8);
+  --pico-scrollbar-width: 0px;
+
+  /* Pico's icons, redrawn in brass */
+  --pico-icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(197,160,89)' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  --pico-icon-date: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(197,160,89)' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='1'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+  --pico-icon-time: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(197,160,89)' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpolyline points='12 6 12 12 16 14'/%3E%3C/svg%3E");
+  --pico-icon-search: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(197,160,89)' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+  --pico-icon-close: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(197,160,89)' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E");
+  /* Check & minus are drawn in lampblack: they sit on a brass fill. */
+  --pico-icon-checkbox: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(34,32,31)' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  --pico-icon-minus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(34,32,31)' stroke-width='3.5' stroke-linecap='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
+  --pico-icon-valid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(143,179,154)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  --pico-icon-invalid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(217,138,134)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E");
+}

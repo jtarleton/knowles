@@ -1,0 +1,252 @@
+<?php
+
+/**
+ * @file
+ * Theme hooks for the Knowles theme.
+ */
+
+declare(strict_types=1);
+
+use Drupal\Component\Utility\DeprecationHelper;
+use Drupal\Component\Utility\Xss;
+use Drupal\Core\Extension\ThemeSettingsProvider;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_page_attachments_alter().
+ *
+ * Attaches the web fonts (unless turned off), preconnects to the font and
+ * CDN hosts, adds theme-color meta tags, and prints the custom palette.
+ */
+function knowles_page_attachments_alter(array &$attachments): void {
+  $attachments['#cache']['tags'][] = 'config:knowles.settings';
+
+  $hosts = ['https://cdn.jsdelivr.net' => TRUE];
+  if (knowles_setting('web_fonts')) {
+    $attachments['#attached']['library'][] = 'knowles/fonts';
+    $hosts = [
+      'https://fonts.googleapis.com' => FALSE,
+      'https://fonts.gstatic.com' => TRUE,
+    ] + $hosts;
+  }
+  foreach ($hosts as $href => $crossorigin) {
+    $link = ['rel' => 'preconnect', 'href' => $href];
+    if ($crossorigin) {
+      $link['crossorigin'] = 'anonymous';
+    }
+    $attachments['#attached']['html_head_link'][] = [$link];
+  }
+
+  // Browser chrome (such as the mobile address bar) follows the scheme. In
+  // "auto" mode that depends on the visitor, so add one tag per scheme.
+  $scheme = knowles_color_scheme();
+  $theme_colors = ['dark' => '#1c1816', 'light' => '#f4f0ea'];
+  foreach ($theme_colors as $name => $color) {
+    if ($scheme !== 'auto' && $scheme !== $name) {
+      continue;
+    }
+    $meta = ['name' => 'theme-color', 'content' => $color];
+    if ($scheme === 'auto') {
+      $meta['media'] = '(prefers-color-scheme: ' . $name . ')';
+    }
+    $attachments['#attached']['html_head'][] = [
+      ['#tag' => 'meta', '#attributes' => $meta],
+      'knowles_theme_color_' . $name,
+    ];
+  }
+
+  $css = knowles_custom_colors_css();
+  if ($css !== '') {
+    $attachments['#attached']['html_head'][] = [
+      ['#tag' => 'style', '#value' => Markup::create($css)],
+      'knowles_custom_colors',
+    ];
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for html.html.twig.
+ *
+ * Html.html.twig writes the color scheme onto <html data-theme>. In "auto"
+ * mode, tokens.css resolves it from prefers-color-scheme, so no scheme is
+ * picked server-side and the page cache is not split per visitor.
+ */
+function knowles_preprocess_html(array &$variables): void {
+  $variables['color_scheme'] = knowles_color_scheme();
+  $variables['#cache']['tags'][] = 'config:knowles.settings';
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for page.html.twig.
+ */
+function knowles_preprocess_page(array &$variables): void {
+  $site = \Drupal::config('system.site');
+  $variables['site_name'] = $site->get('name');
+  $variables['#cache']['tags'][] = 'config:system.site';
+  $variables['#cache']['tags'][] = 'config:knowles.settings';
+
+  $variables['content_font'] = knowles_setting('content_font') === 'serif' ? 'serif' : 'sans';
+
+  // Footer.
+  $variables['theme_credit'] = (bool) knowles_setting('theme_credit');
+  if ($variables['theme_credit']) {
+    $info = \Drupal::service('extension.list.theme')->getExtensionInfo('knowles');
+    $variables['theme_label'] = $info['name'] ?? 'Knowles';
+    $variables['theme_version'] = $info['version'] ?? '';
+  }
+  $copyright = trim((string) knowles_setting('footer_copyright'));
+  $variables['footer_copyright'] = NULL;
+  if ($copyright !== '') {
+    // The year changes once a year; the page cache is cleared far more often.
+    $copyright = strtr(Xss::filterAdmin($copyright), [
+      '@year' => date('Y'),
+      '@site_name' => htmlspecialchars((string) $site->get('name'), ENT_QUOTES, 'UTF-8'),
+    ]);
+    $variables['footer_copyright'] = Markup::create($copyright);
+  }
+
+  // Search.
+  $variables['search_label'] = knowles_setting('search_label') ?: t('Search');
+  $variables['search_title'] = knowles_setting('search_title') ?: t('Search');
+  $variables['search_url'] = NULL;
+  $path = trim((string) knowles_setting('search_path'));
+  if (str_starts_with($path, '/')) {
+    $variables['search_url'] = Url::fromUserInput($path)->toString();
+  }
+  $variables['search_modal'] = knowles_setting('search_modal') && !empty($variables['page']['search_modal']);
+  $variables['search_button'] = knowles_setting('search_button') && ($variables['search_modal'] || $variables['search_url']);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for block--system-branding-block.html.twig.
+ *
+ * Adds the logo style and the optional light scheme logo. Both logos are
+ * printed and CSS shows the one for the scheme in use, so the same markup
+ * serves every visitor in "auto" mode.
+ */
+function knowles_preprocess_block__system_branding_block(array &$variables): void {
+  $variables['#cache']['tags'][] = 'config:knowles.settings';
+  $variables['logo_style'] = knowles_setting('logo_style') === 'plain' ? 'plain' : 'roundel';
+  $variables['site_logo_light'] = NULL;
+
+  $path = trim((string) knowles_setting('logo_light_path'));
+  if ($path !== '') {
+    $variables['site_logo_light'] = \Drupal::service('file_url_generator')->generateString($path);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for html-mail.html.twig.
+ *
+ * Passes the palette to the html_mail module's template override, so
+ * emails match the site. The module supplies the logo and site name.
+ */
+function knowles_preprocess_html_mail(array &$variables): void {
+  $colors = knowles_colors();
+  // Email clients don't support color-mix(), so darken the accent here for
+  // link text on white. The default palette has a hand-picked shade.
+  $colors['accent_ink'] = $colors['accent'] === knowles_default_colors()['accent']
+    ? '#7a5a1e'
+    : vsprintf('#%02x%02x%02x', array_map(
+      static fn (string $channel): int => (int) round(hexdec($channel) * 0.6),
+      str_split(substr($colors['accent'], 1), 2),
+    ));
+  $variables['knowles_colors'] = $colors;
+  $variables['#cache']['tags'][] = 'config:knowles.settings';
+}
+
+/**
+ * Returns a Knowles theme setting.
+ *
+ * @param string $key
+ *   The setting name, with dots for nested keys (for example 'colors.accent').
+ *
+ * @return mixed
+ *   The setting value, or NULL if it is not set.
+ */
+function knowles_setting(string $key): mixed {
+  return DeprecationHelper::backwardsCompatibleCall(
+    \Drupal::VERSION,
+    '11.3',
+    static fn () => \Drupal::service(ThemeSettingsProvider::class)->getSetting($key, 'knowles'),
+    static fn () => theme_get_setting($key, 'knowles'),
+  );
+}
+
+/**
+ * Returns the configured color scheme: 'auto', 'dark' or 'light'.
+ */
+function knowles_color_scheme(): string {
+  $scheme = knowles_setting('color_scheme_mode');
+  return in_array($scheme, ['auto', 'dark', 'light'], TRUE) ? $scheme : 'auto';
+}
+
+/**
+ * Returns the default palette, used when custom colors are off.
+ *
+ * @return array<string, string>
+ *   Hex colors keyed by 'accent', 'secondary' and 'contrast'.
+ */
+function knowles_default_colors(): array {
+  return [
+    'accent' => '#c5a059',
+    'secondary' => '#3a4f41',
+    'contrast' => '#5c2c2e',
+  ];
+}
+
+/**
+ * Returns the palette: the custom colors if enabled, otherwise the defaults.
+ *
+ * @return array<string, string>
+ *   Hex colors keyed by 'accent', 'secondary' and 'contrast'.
+ */
+function knowles_colors(): array {
+  $colors = knowles_default_colors();
+  if (knowles_setting('custom_colors')) {
+    foreach (array_keys($colors) as $key) {
+      $value = (string) knowles_setting('colors.' . $key);
+      if (preg_match('/^#[0-9a-fA-F]{6}$/', $value)) {
+        $colors[$key] = strtolower($value);
+      }
+    }
+  }
+  return $colors;
+}
+
+/**
+ * Builds the CSS that swaps in the custom palette.
+ *
+ * Each color comes with lighter and darker shades mixed from it, standing
+ * in for the hand-picked shades of the default palette in tokens.css.
+ *
+ * @return string
+ *   The CSS, or an empty string when the default palette is in use.
+ */
+function knowles_custom_colors_css(): string {
+  $colors = knowles_colors();
+  if ($colors === knowles_default_colors()) {
+    return '';
+  }
+  $mix = static fn (string $color, int $percent, string $with): string => "color-mix(in srgb, $color $percent%, $with)";
+  $tokens = [
+    '--kn-brass' => $colors['accent'],
+    '--kn-brass-bright' => $mix($colors['accent'], 75, 'white'),
+    '--kn-brass-ink' => $mix($colors['accent'], 60, 'black'),
+    '--kn-brass-ink-deep' => $mix($colors['accent'], 45, 'black'),
+    '--kn-hunter' => $colors['secondary'],
+    '--kn-hunter-deep' => $mix($colors['secondary'], 75, 'black'),
+    '--kn-hunter-light' => $mix($colors['secondary'], 50, 'white'),
+    '--kn-oxblood' => $colors['contrast'],
+    '--kn-oxblood-deep' => $mix($colors['contrast'], 80, 'black'),
+    '--kn-oxblood-ink' => $mix($colors['contrast'], 85, 'black'),
+    '--kn-oxblood-light' => $mix($colors['contrast'], 50, 'white'),
+  ];
+  $declarations = '';
+  foreach ($tokens as $name => $value) {
+    $declarations .= $name . ':' . $value . ';';
+  }
+  // :root:root outranks the palette's :root in tokens.css, which loads later.
+  return ':root:root{' . $declarations . '}';
+}

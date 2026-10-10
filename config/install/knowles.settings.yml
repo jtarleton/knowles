@@ -1,0 +1,18 @@
+langcode: en
+color_scheme_mode: auto
+logo_style: roundel
+logo_light_path: ''
+web_fonts: true
+content_font: sans
+custom_colors: false
+colors:
+  accent: '#c5a059'
+  secondary: '#3a4f41'
+  contrast: '#5c2c2e'
+search_button: true
+search_modal: true
+search_path: /search
+search_label: Search
+search_title: 'Search the site'
+footer_copyright: '© @year @site_name. All rights reserved.'
+theme_credit: true

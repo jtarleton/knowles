@@ -1,0 +1,106 @@
+{#
+/**
+ * @file
+ * Knowles email template for the HTML Mail module (drupal/html_mail).
+ *
+ * Overrides the module's neutral template; see its README for the
+ * variables. Only used when that module is installed. Email clients ignore
+ * most CSS and web fonts, so everything is inline, and Fraunces / Lora fall
+ * back to the old-style serifs the site lists after them.
+ *
+ * Colors follow the theme: an espresso header with an accent rule, a
+ * parchment page, and a contrast-colored button. The accent and contrast
+ * colors come from the theme settings (knowles_preprocess_html_mail()).
+ */
+#}
+{% set serif = "font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;" %}
+{% set sans = "font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;" %}
+{% set espresso = '#1c1816' %}
+{% set parchment = '#f4f0ea' %}
+{% set paper = '#fffdf8' %}
+{% set vellum = '#e0d6c4' %}
+{% set brass = knowles_colors.accent|default('#c5a059') %}
+{% set brass_ink = knowles_colors.accent_ink|default('#7a5a1e') %}
+{% set oxblood = knowles_colors.contrast|default('#5c2c2e') %}
+{% set ink = '#22201f' %}
+{% set muted = '#6b6159' %}
+<!doctype html>
+<html lang="{{ langcode }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>{{ subject }}</title>
+</head>
+<body style="margin:0;padding:0;background:{{ parchment }};">
+{% if preheader %}<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">{{ preheader }}&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;</div>{% endif %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:{{ parchment }};"><tr><td align="center" style="padding:32px 12px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:{{ paper }};border:1px solid {{ vellum }};border-radius:14px;overflow:hidden;">
+
+  {# Header: the logo and the site name on espresso, an accent rule below. #}
+  <tr><td style="background:{{ espresso }};padding:22px 28px;border-bottom:3px solid {{ brass }};">
+    <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+      {% if logo_url %}<td style="padding-right:14px;vertical-align:middle;"><a href="{{ site_url }}"><img src="{{ logo_url }}" width="44" height="44" alt="" style="display:block;border:0;border-radius:50%;"></a></td>{% endif %}
+      <td style="vertical-align:middle;">
+        <a href="{{ site_url }}" style="{{ serif }}font-size:20px;font-weight:600;letter-spacing:.01em;color:{{ brass }};text-decoration:none;">{{ site_name }}</a>
+        {% if eyebrow %}<div style="{{ sans }}margin-top:3px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#a99d90;">{{ eyebrow }}</div>{% endif %}
+      </td>
+    </tr></table>
+  </td></tr>
+
+  <tr><td style="{{ serif }}padding:32px 32px 12px;color:{{ ink }};">
+    {% if greeting %}<p style="margin:0 0 16px;font-size:17px;">{{ greeting }}</p>{% endif %}
+    {% if heading %}<h1 style="{{ serif }}margin:0 0 18px;font-size:26px;line-height:1.25;font-weight:600;color:{{ ink }};">{{ heading }}</h1>{% endif %}
+
+    {% if callout %}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;background:{{ parchment }};border-radius:10px;border-left:4px solid {{ brass }};"><tr><td style="padding:14px 18px;">
+      {% if callout.eyebrow %}<div style="{{ sans }}font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:{{ brass_ink }};">{{ callout.eyebrow }}</div>{% endif %}
+      {% if callout.label %}<div style="margin-top:2px;font-size:14px;color:{{ muted }};">{{ callout.label }}</div>{% endif %}
+      {% if callout.value %}<div style="font-size:30px;font-weight:700;line-height:1.2;color:{{ ink }};">{{ callout.value }}</div>{% endif %}
+      {% if callout.note %}<div style="margin:2px 0 8px;font-size:14px;color:{{ muted }};">{{ callout.note }}</div>{% endif %}
+      {% if callout.rows %}<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        {% for row in callout.rows %}<tr>
+          <td style="padding:7px 0;border-top:1px solid {{ vellum }};font-size:15px;"><strong>{{ row.label }}</strong>{% if row.badge %} <span style="{{ sans }}padding:1px 8px;border-radius:999px;background:{{ knowles_colors.secondary|default('#3a4f41') }};color:#fff;font-size:11px;font-weight:700;">{{ row.badge }}</span>{% endif %}{% if row.note %} <span style="color:{{ muted }};font-size:13px;">· {{ row.note }}</span>{% endif %}</td>
+          <td align="right" style="padding:7px 0;border-top:1px solid {{ vellum }};font-size:15px;font-weight:700;white-space:nowrap;">{{ row.value }}</td>
+        </tr>{% endfor %}
+      </table>{% endif %}
+    </td></tr></table>
+    {% endif %}
+
+    {% if code %}
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:4px 0 22px;"><tr><td style="padding:16px 26px;background:{{ parchment }};border:1px solid {{ vellum }};border-bottom:3px solid {{ brass }};border-radius:10px;font-family:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;font-size:34px;font-weight:700;letter-spacing:10px;color:{{ ink }};-webkit-user-select:all;user-select:all;">{{ code }}</td></tr></table>
+    {% endif %}
+
+    {% set body_styles = {
+      'p': serif ~ 'margin:0 0 16px;font-size:17px;line-height:1.6;color:' ~ ink ~ ';',
+      'h2': serif ~ 'margin:24px 0 8px;font-size:20px;line-height:1.3;font-weight:600;color:' ~ ink ~ ';',
+      'h3': serif ~ 'margin:20px 0 6px;font-size:17px;font-weight:600;color:' ~ ink ~ ';',
+      'ul': serif ~ 'margin:0 0 16px;padding:0 0 0 22px;font-size:17px;line-height:1.6;color:' ~ ink ~ ';',
+      'ol': serif ~ 'margin:0 0 16px;padding:0 0 0 22px;font-size:17px;line-height:1.6;color:' ~ ink ~ ';',
+      'li': 'margin:0 0 6px;',
+      'a': 'color:' ~ brass_ink ~ ';',
+    } %}
+    {{ body|mail_style(body_styles) }}
+
+    {% if button %}
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:10px 0 22px;"><tr>
+      <td style="border-radius:8px;background:{{ oxblood }};border-bottom:2px solid {{ brass }};"><a href="{{ button.url }}" style="{{ sans }}display:inline-block;padding:14px 30px;font-size:16px;font-weight:700;letter-spacing:.02em;color:#ffffff;text-decoration:none;">{{ button.label }}</a></td>
+      {% if secondary_button %}<td style="width:10px;"></td><td style="border-radius:8px;border:1px solid {{ vellum }};"><a href="{{ secondary_button.url }}" style="{{ sans }}display:inline-block;padding:13px 22px;font-size:16px;font-weight:600;color:{{ ink }};text-decoration:none;">{{ secondary_button.label }}</a></td>{% endif %}
+    </tr></table>
+    {% endif %}
+    {{ body_after|mail_style(body_styles) }}
+    {% if fallback_url %}
+    <p style="{{ sans }}margin:8px 0 16px;padding:12px 14px;background:{{ parchment }};border-radius:8px;font-size:13px;line-height:1.5;color:{{ muted }};">{{ 'Button not working? Copy and paste this link:'|t }}<br><a href="{{ fallback_url }}" style="color:{{ brass_ink }};word-break:break-all;">{{ fallback_url }}</a></p>
+    {% endif %}
+    {% if notice %}<p style="{{ sans }}margin:16px 0 8px;font-size:13px;line-height:1.5;color:{{ muted }};">{{ notice }}</p>{% endif %}
+  </td></tr>
+
+  <tr><td style="{{ sans }}padding:18px 32px 24px;border-top:1px solid {{ vellum }};font-size:12px;line-height:1.6;color:{{ muted }};">
+    {% if footer %}{{ footer|mail_style({'a': 'color:' ~ muted ~ ';'}) }}<br>{% endif %}
+    {% if unsubscribe_url %}<a href="{{ unsubscribe_url }}" style="color:{{ muted }};">{{ 'Unsubscribe'|t }}</a> · {% endif %}<a href="{{ site_url }}" style="color:{{ muted }};text-decoration:none;">{{ site_url|replace({'https://': '', 'http://': ''}) }}</a>
+  </td></tr>
+</table>
+</td></tr></table>
+</body>
+</html>

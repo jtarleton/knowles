@@ -1,0 +1,232 @@
+/**
+ * @file
+ * Images & media: responsive by default, framed like keepsakes.
+ *
+ *   Default      – content images get a thin gilt keyline and soft shadow.
+ *   .frame--map  – a parchment mat with a double hairline border, as an
+ *                  antique map or engraving would be mounted.
+ *   .frame--polaroid – cream instant-print border with a deep bottom lip
+ *                  and a handwritten-feeling Fraunces italic caption.
+ *   .frame--plain – opt out of framing (logos, icons, inline art).
+ *
+ * Drupal hooks: image fields (.field--type-image), CKEditor 5 captions
+ * (figure.caption-img / [data-caption]), alignment (.align-left/right/center),
+ * media entities (.media), and responsive image <picture> output.
+ */
+
+/* -------------------------------------------------------------------------
+ * Responsive baseline
+ * ---------------------------------------------------------------------- */
+.pico :is(img, picture, video, canvas, svg) {
+  max-width: 100%;
+  height: auto;
+}
+.pico img {
+  display: block;
+  vertical-align: middle;
+  border-style: none;
+}
+.pico :is(iframe, video) {
+  max-width: 100%;
+}
+/* Media embeds keep their ratio (oEmbed video, maps). */
+.pico .media-oembed-content,
+.pico .mt-ratio-16x9 {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: 1px solid var(--kn-rule);
+  border-radius: var(--kn-radius);
+}
+
+/* -------------------------------------------------------------------------
+ * Default content-image treatment
+ * ---------------------------------------------------------------------- */
+/* :where() keeps this at 0,1,1 so every .frame--* rule below overrides it. */
+.pico :where(.field--type-image, .text-content, .node__content, .field--name-body) img {
+  border: 1px solid var(--kn-rule);
+  border-radius: 2px;
+  box-shadow: var(--kn-shadow-md);
+}
+
+/* Figure + caption (CKEditor 5 outputs figure.caption.caption-img) */
+.pico figure {
+  margin: 1.75rem 0;
+}
+.pico figure figcaption,
+.pico .caption > figcaption {
+  padding-top: 0.6rem;
+  text-align: center;
+  color: var(--kn-text-muted);
+  font-size: 0.88rem;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+/* Drupal's filter_caption outputs <figure role="group" class="caption">,
+   which Pico would lay out as an inline-flex button group. Reset it to a
+   shrink-wrapped figure whose caption is only as wide as the image. */
+.pico figure.caption[role="group"] {
+  display: table;
+  width: auto;
+  margin: 1.75rem 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.pico figure.caption[role="group"] > * {
+  flex: none;
+}
+.pico figure.caption[role="group"] > figcaption {
+  display: table-caption;
+  caption-side: bottom;
+}
+.pico figure.caption.align-center {
+  margin-inline: auto;
+}
+
+/* Alignment classes from Drupal's filter_align. */
+.pico .align-left {
+  float: left;
+  max-width: min(50%, 22rem);
+  margin: 0.35rem 1.5rem 1rem 0;
+}
+.pico .align-right {
+  float: right;
+  max-width: min(50%, 22rem);
+  margin: 0.35rem 0 1rem 1.5rem;
+}
+.pico .align-center {
+  margin-inline: auto;
+}
+@media (max-width: 575px) {
+  .pico :is(.align-left, .align-right) {
+    float: none;
+    max-width: 100%;
+    margin: 1.25rem 0;
+  }
+}
+
+/* -------------------------------------------------------------------------
+ * Map / engraving mount
+ * ---------------------------------------------------------------------- */
+.pico .frame--map {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  padding: clamp(0.75rem, 2.2vw, 1.25rem);
+  border: 1px solid #b89a63;
+  border-radius: 1px;
+  background: var(--kn-grain-paper), radial-gradient(ellipse at center, #f6f1e8 55%, #e6dac4 100%);
+  box-shadow:
+    inset 0 0 0 4px #f4efe6,
+    inset 0 0 0 5px color-mix(in srgb, var(--kn-brass-ink) 55%, transparent),
+    /* inner gilt hairline */ inset 0 0 30px rgb(120, 85, 40, 0.18),
+    /* foxing at the edges */ var(--kn-shadow-lg);
+}
+.pico .frame--map img {
+  filter: sepia(0.18) contrast(1.02);
+  border: 1px solid rgb(34, 32, 31, 0.55);
+  border-radius: 0;
+  box-shadow: none;
+}
+.pico .frame--map figcaption {
+  padding-top: 0.75rem;
+  letter-spacing: 0.14em;
+  color: #4a4038;
+  font-family: var(--kn-font-display);
+  font-size: 0.85rem;
+  font-style: normal;
+  font-variant-caps: all-small-caps;
+}
+
+/* Brass photo corners – add .frame--cornered to either frame. */
+.pico .frame--cornered::before,
+.pico .frame--cornered::after {
+  position: absolute;
+  width: 1.4rem;
+  height: 1.4rem;
+  content: "";
+  background: linear-gradient(135deg, color-mix(in sRGB, var(--kn-brass) 60%, white), var(--kn-brass) 45%, color-mix(in sRGB, var(--kn-brass) 70%, black));
+  box-shadow: 0 1px 2px rgb(0, 0, 0, 0.4);
+}
+.pico .frame--cornered::before {
+  top: -1px;
+  left: -1px;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+.pico .frame--cornered::after {
+  right: -1px;
+  bottom: -1px;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+/* -------------------------------------------------------------------------
+ * Polaroid / instant print
+ * ---------------------------------------------------------------------- */
+.pico .frame--polaroid {
+  display: inline-block;
+  max-width: min(100%, 24rem);
+  padding: 0.8rem 0.8rem 0;
+  transition:
+    transform 260ms var(--kn-ease),
+    box-shadow 260ms var(--kn-ease);
+  transform: rotate(-1.25deg);
+  border-radius: 2px;
+  background: var(--kn-grain-paper), linear-gradient(180deg, #fbf8f2, #efe8dc);
+  box-shadow:
+    0 1px 1px rgb(0, 0, 0, 0.15),
+    0 12px 26px -10px rgb(0, 0, 0, 0.65);
+}
+.pico .frame--polaroid:nth-of-type(even) {
+  transform: rotate(1deg);
+}
+.pico .frame--polaroid:hover {
+  transform: rotate(0) translateY(-3px);
+  box-shadow:
+    0 1px 1px rgb(0, 0, 0, 0.15),
+    0 20px 34px -12px rgb(0, 0, 0, 0.7);
+}
+.pico .frame--polaroid img {
+  width: 100%;
+  object-fit: cover;
+  filter: sepia(0.22) saturate(0.9) contrast(1.03);
+  border: 0;
+  border-radius: 0;
+  box-shadow: inset 0 0 0 1px rgb(0, 0, 0, 0.1);
+  aspect-ratio: 1 / 1;
+}
+.pico .frame--polaroid figcaption {
+  padding: 0.85rem 0.25rem 1.15rem;
+  text-align: center;
+  color: var(--kn-lampblack);
+  font-family: var(--kn-font-display);
+  font-size: 1.05rem;
+  font-style: italic;
+  font-variation-settings:
+    "SOFT" 100,
+    "WONK" 1;
+}
+
+/* -------------------------------------------------------------------------
+ * Gallery of prints – laid out loosely on the desk.
+ * ---------------------------------------------------------------------- */
+.pico .print-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  gap: 2rem 1.5rem;
+  align-items: start;
+  margin: 2rem 0;
+}
+.pico .print-gallery > .frame--polaroid {
+  max-width: 100%;
+  margin: 0;
+}
+
+/* Opt-out */
+.pico .frame--plain,
+.pico .frame--plain img {
+  filter: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}

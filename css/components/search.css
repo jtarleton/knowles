@@ -1,0 +1,327 @@
+/**
+ * @file
+ * Site search: the header modal, its autocomplete list, and /search results.
+ *
+ *   .search-modal          – Pico's <dialog>: full-viewport lamplight dimmer.
+ *   .search-modal__panel   – the <article> inside; inherits the Knowles desk
+ *                            blotter from cards.css, widened and lifted.
+ *   .ui-autocomplete       – Search API autocomplete (jQuery UI menu), as an
+ *                            index card drawer under the field.
+ *   .view-search           – results: a catalog of index cards with the
+ *                            matched words picked out in brass.
+ */
+
+/* -------------------------------------------------------------------------
+ * Modal
+ * ---------------------------------------------------------------------- */
+.pico dialog.search-modal {
+  /* Pico centers the panel; nudge it up so the suggestion list has room. */
+  align-items: flex-start;
+  padding: clamp(1rem, 12vh, 8rem) 1rem 1rem;
+  background-color: rgb(var(--kn-shadow-color) / 0.72);
+  backdrop-filter: blur(3px) sepia(0.35);
+}
+.pico dialog.search-modal[open] {
+  animation: search-modal-in var(--kn-duration) var(--kn-ease);
+}
+@keyframes search-modal-in {
+  from {
+    opacity: 0;
+  }
+}
+.search-modal-is-open {
+  overflow: hidden;
+}
+
+.pico .search-modal__panel {
+  /* jQuery UI positions the menu absolutely against this. */
+  overflow: visible;
+  width: min(100%, 40rem);
+  max-width: none;
+  margin: 0;
+  padding: 1.5rem 1.75rem 1.1rem;
+  border: 1px solid var(--kn-rule);
+  box-shadow: var(--kn-shadow-lg);
+}
+.pico dialog.search-modal[open] .search-modal__panel {
+  animation: search-modal-panel-in 260ms var(--kn-ease);
+}
+@keyframes search-modal-panel-in {
+  from {
+    transform: translateY(-0.75rem);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pico dialog.search-modal[open],
+  .pico dialog.search-modal[open] .search-modal__panel {
+    animation: none;
+  }
+}
+
+/* Header: small-caps eyebrow over a Fraunces title, gilt hairline beneath. */
+.pico .search-modal__header {
+  position: relative;
+  margin: 0 0 1.1rem;
+  padding: 0 2.5rem 0.85rem 0;
+  border-bottom: 1px solid var(--kn-rule);
+  background: none;
+}
+.pico .search-modal__eyebrow {
+  margin: 0 0 0.15rem;
+  letter-spacing: 0.12em;
+  color: var(--kn-accent-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-variant-caps: all-small-caps;
+}
+.pico .search-modal__title {
+  margin: 0;
+  font-family: var(--kn-font-display);
+  font-variation-settings: var(--kn-fraunces-display);
+  font-size: clamp(1.4rem, 1.1rem + 1.2vw, 1.85rem);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+/* Close: a quiet "×" in the corner that brasses up on hover. Scoped by
+ * element + two classes to outrank the kit's button plate (buttons.css). */
+.pico .search-modal button.search-modal__close {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.6rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    color var(--kn-duration) var(--kn-ease),
+    border-color var(--kn-duration) var(--kn-ease),
+    background-color var(--kn-duration) var(--kn-ease);
+  transform: none;
+  color: var(--kn-text-muted);
+  border: 1px solid transparent;
+  border-radius: var(--kn-radius);
+  background: none;
+  background-image: none;
+  box-shadow: none;
+  text-shadow: none;
+}
+.pico .search-modal button.search-modal__close::before {
+  content: "\00d7";
+  font-family: var(--kn-font-display);
+  font-size: 1.7rem;
+  font-weight: 400;
+  line-height: 1;
+}
+.pico .search-modal button.search-modal__close:is(:hover, :focus-visible, :active) {
+  transform: none;
+  color: var(--kn-accent-hover);
+  border-color: var(--kn-rule);
+  background: color-mix(in sRGB, var(--kn-brass) 8%, transparent);
+  box-shadow: none;
+}
+
+.pico .search-modal__hint {
+  margin: 0.85rem 0 0;
+  text-align: right;
+  color: var(--kn-text-muted);
+  font-size: 0.82rem;
+  font-style: italic;
+}
+@media (hover: none) {
+  .pico .search-modal__hint {
+    display: none; /* no Esc key on a phone */
+  }
+}
+.pico .search-modal__hint kbd {
+  padding: 0.05rem 0.35rem;
+  color: var(--kn-text);
+  border: 1px solid var(--kn-rule);
+  border-radius: var(--kn-radius);
+  background: var(--kn-surface-sunken);
+  font-family: var(--kn-font-mono);
+  font-size: 0.75rem;
+  font-style: normal;
+}
+
+/* -------------------------------------------------------------------------
+ * Search form (modal + search page): field and button on one line. Covers
+ * core Search's block form and a Search API view with the ID "search".
+ * ---------------------------------------------------------------------- */
+.pico :is(.views-exposed-form[data-drupal-selector^="views-exposed-form-search"] form, form.search-block-form) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.6rem;
+  margin: 0;
+}
+.pico :is(.views-exposed-form[data-drupal-selector^="views-exposed-form-search"], .search-block-form) .form-item {
+  flex: 1 1 14rem;
+  margin: 0;
+}
+.pico :is(.views-exposed-form[data-drupal-selector^="views-exposed-form-search"], .search-block-form) .form-actions {
+  flex: 0 0 auto;
+  margin: 0;
+}
+.pico :is(.views-exposed-form[data-drupal-selector^="views-exposed-form-search"], .search-block-form) :is(input[type="search"], input[type="text"]) {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.pico :is(.views-exposed-form[data-drupal-selector^="views-exposed-form-search"], .search-block-form) :is(input[type="submit"], button) {
+  width: auto;
+  margin: 0;
+}
+/* /search page: breathing room between the form and the result count. */
+.pico .site-main :is(.views-exposed-form[data-drupal-selector^="views-exposed-form-search"], .search-block-form) {
+  margin-bottom: 1.75rem;
+}
+/* The label stays for screen readers but is visually hidden: the modal
+ * title and the /search page title already say what the field is for. */
+.pico :is(.views-exposed-form[data-drupal-selector^="views-exposed-form-search"], .search-block-form) label {
+  position: absolute !important;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  width: 1px;
+  height: 1px;
+  white-space: nowrap;
+}
+/* Core's gray autocomplete throbber sits in the field even when idle;
+ * the suggestion list appearing is feedback enough. */
+.pico :is(.views-exposed-form, .search-block-form) input.form-autocomplete {
+  background-image: none;
+}
+
+/* -------------------------------------------------------------------------
+ * Autocomplete list – an index-card drawer.
+ * ---------------------------------------------------------------------- */
+.pico .ui-autocomplete,
+.ui-front .ui-autocomplete {
+  z-index: 10;
+  overflow-y: auto;
+  max-height: min(22rem, 50vh);
+  margin: 0;
+  padding: 0.3rem;
+  list-style: none;
+  border: 1px solid var(--kn-rule-strong);
+  border-radius: var(--kn-radius);
+  background: var(--kn-surface-raised);
+  box-shadow: var(--kn-shadow-md);
+  font-family: var(--kn-font-body);
+}
+.ui-front .ui-autocomplete .ui-menu-item {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ui-front .ui-autocomplete .ui-menu-item-wrapper,
+.ui-front .ui-autocomplete a {
+  display: block;
+  padding: 0.5rem 0.7rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--kn-text);
+  border: 1px solid transparent;
+  border-radius: var(--kn-radius);
+}
+.ui-front .ui-autocomplete .ui-state-active,
+.ui-front .ui-autocomplete .ui-menu-item-wrapper:hover {
+  margin: 0;
+  color: var(--kn-heading);
+  border-color: var(--kn-rule);
+  background: linear-gradient(180deg, color-mix(in sRGB, var(--kn-brass) 16%, transparent), color-mix(in sRGB, var(--kn-brass) 5%, transparent));
+}
+/* Live results show the node title; the typed part arrives in <strong>. */
+.ui-front .ui-autocomplete :is(strong, .autocomplete-suggestion-user-input) {
+  color: var(--kn-accent-text);
+  font-weight: 700;
+}
+.ui-front .ui-autocomplete .autocomplete-suggestion-results {
+  float: right;
+  color: var(--kn-text-muted);
+  font-size: 0.85em;
+}
+.ui-helper-hidden-accessible {
+  position: absolute !important;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  width: 1px;
+  height: 1px;
+}
+
+/* -------------------------------------------------------------------------
+ * /search results – catalog cards.
+ * ---------------------------------------------------------------------- */
+.pico .view-search .view-filters {
+  margin-bottom: 1.75rem;
+}
+.pico .view-search .view-header {
+  margin-bottom: 1rem;
+  letter-spacing: 0.08em;
+  color: var(--kn-text-muted);
+  font-variant-caps: all-small-caps;
+}
+.pico .view-search .search-result {
+  position: relative;
+  margin: 0 0 1rem;
+  padding: 1rem 1.25rem 1rem 1.4rem;
+  transition: border-color var(--kn-duration) var(--kn-ease);
+  border: 1px solid var(--kn-rule-faint);
+  border-left: 3px solid var(--kn-rule-strong);
+  border-radius: var(--kn-radius);
+  background: var(--kn-surface);
+  box-shadow: var(--kn-shadow-sm);
+}
+.pico .view-search .search-result:hover {
+  border-left-color: var(--kn-accent);
+}
+.pico .view-search .search-result__title {
+  margin: 0 0 0.35rem;
+  font-family: var(--kn-font-display);
+  font-variation-settings: var(--kn-fraunces-text);
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+.pico .view-search .search-result__title a {
+  text-decoration: none;
+  color: var(--kn-heading);
+}
+.pico .view-search .search-result__title a:is(:hover, :focus-visible) {
+  text-decoration: underline;
+  color: var(--kn-accent-hover);
+  text-decoration-color: var(--kn-rule-strong);
+}
+.pico .view-search .search-result__meta {
+  margin: 0 0 0.4rem;
+  letter-spacing: 0.08em;
+  color: var(--kn-text-muted);
+  font-size: 0.82rem;
+  font-variant-caps: all-small-caps;
+}
+.pico .view-search .search-result__excerpt {
+  margin: 0;
+  color: var(--kn-text);
+  font-size: 0.97rem;
+  line-height: 1.6;
+}
+/* Matched words (Search API's highlight processor wraps them in <strong>;
+ * Views' XSS filter would strip <mark>): inked in brass, underlined like a
+ * reader's pencil mark. */
+.pico .view-search :is(.search-result__excerpt, .search-result__title) strong {
+  padding: 0 0.1em;
+  color: var(--kn-heading);
+  border-radius: 2px;
+  background: color-mix(in sRGB, var(--kn-brass) 20%, transparent);
+  box-shadow: inset 0 -1px 0 var(--kn-rule-strong);
+  font-weight: inherit;
+}
+.pico .view-search .view-empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--kn-text-muted);
+  border: 1px dashed var(--kn-rule);
+  border-radius: var(--kn-radius);
+  font-style: italic;
+}

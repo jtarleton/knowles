@@ -1,0 +1,259 @@
+/**
+ * @file
+ * Base elements: page ground, typography, links, rules, code.
+ *
+ * Pico's element rules are scoped to `.pico` (conditional build), so the
+ * overrides here are scoped the same way to match its specificity; they win
+ * by loading later.
+ */
+
+/* -------------------------------------------------------------------------
+ * Page ground: lamplit espresso wood with a leather grain.
+ * The radial gradient is the reading-lamp pool; the grain sits on top.
+ * ---------------------------------------------------------------------- */
+html {
+  background-color: var(--kn-bg);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--kn-text);
+  background-color: var(--kn-bg);
+  background-image: var(--kn-grain), radial-gradient(ellipse 90% 60% at 50% -10%, color-mix(in sRGB, var(--kn-brass) 9%, transparent), transparent 70%), radial-gradient(ellipse 120% 80% at 50% 120%, rgb(0, 0, 0, 0.35), transparent 60%);
+  /* Pico sets `background-repeat: no-repeat` on every element; the grain
+     tile has to repeat, and the gradients are full-size anyway. */
+  background-repeat: repeat;
+  font-family: var(--kn-font-body);
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+:root[data-theme="light"] body {
+  background-image: var(--kn-grain), radial-gradient(ellipse 100% 70% at 50% 0%, rgb(255, 255, 255, 0.6), transparent 70%), radial-gradient(ellipse 140% 90% at 50% 110%, color-mix(in sRGB, var(--kn-brass-ink) 12%, transparent), transparent 60%);
+}
+/* color_scheme_mode: auto, OS prefers light — same tuned overlay as the
+   explicit-light rule above (the un-tuned default a few lines up would
+   still resolve correctly via --kn-grain/--kn-bg alone, just with a
+   highlight/shadow gradient shaped for the dark scheme instead). */
+@media (prefers-color-scheme: light) {
+  html[data-theme="auto"] body {
+    background-image: var(--kn-grain), radial-gradient(ellipse 100% 70% at 50% 0%, rgb(255, 255, 255, 0.6), transparent 70%), radial-gradient(ellipse 140% 90% at 50% 110%, color-mix(in sRGB, var(--kn-brass-ink) 12%, transparent), transparent 60%);
+  }
+}
+
+::selection {
+  color: inherit;
+  background: color-mix(in sRGB, var(--kn-brass) 35%, transparent);
+}
+
+/* -------------------------------------------------------------------------
+ * Headings – Fraunces, hand-inked gravitas.
+ * ---------------------------------------------------------------------- */
+.pico :is(h1, h2, h3, h4, h5, h6) {
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+  font-family: var(--kn-font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  font-optical-sizing: auto;
+  font-variation-settings: var(--kn-fraunces-text);
+}
+
+.pico h1 {
+  --pico-font-size: clamp(2.2rem, 1.6rem + 2.4vw, 3.25rem);
+
+  letter-spacing: -0.015em;
+  font-weight: 700;
+  font-variation-settings: var(--kn-fraunces-display);
+}
+.pico h2 {
+  --pico-font-size: clamp(1.7rem, 1.35rem + 1.3vw, 2.3rem);
+
+  font-variation-settings: var(--kn-fraunces-display);
+}
+.pico h3 {
+  --pico-font-size: 1.45rem;
+}
+.pico h4 {
+  --pico-font-size: 1.2rem;
+}
+
+/* h5/h6 read as engraved labels: small caps, tracked out. */
+.pico :is(h5, h6) {
+  --pico-font-size: 0.9rem;
+
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  font-variant-caps: all-small-caps;
+}
+
+/* Heading + deck (Pico's <hgroup>) */
+.pico hgroup > :not(:first-child):last-child {
+  --pico-color: var(--kn-text-muted);
+
+  font-family: var(--kn-font-body);
+  font-style: italic;
+}
+
+/* -------------------------------------------------------------------------
+ * Running text
+ * ---------------------------------------------------------------------- */
+.pico :is(p, li, dd) {
+  text-wrap: pretty;
+}
+
+.pico small,
+.mt-small-caps {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.06em;
+}
+.pico small {
+  font-size: 0.95em;
+}
+
+/* Lead paragraph */
+.pico .lead {
+  color: var(--kn-heading);
+  font-size: 1.2em;
+  line-height: 1.55;
+}
+
+/* Illuminated drop cap: add `.drop-cap` to a paragraph. */
+.pico .drop-cap::first-letter {
+  float: left;
+  margin: 0.08em 0.12em 0 0;
+  color: var(--kn-accent-text);
+  font-family: var(--kn-font-display);
+  font-size: 3.6em;
+  font-variation-settings:
+    "SOFT" 100,
+    "WONK" 1;
+  font-weight: 700;
+  line-height: 0.8;
+}
+
+/* -------------------------------------------------------------------------
+ * Links – brass ink with a hairline underline that fills in on hover.
+ * ---------------------------------------------------------------------- */
+.pico :where(a:not([role="button"])) {
+  --pico-text-decoration: underline;
+
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition:
+    color var(--kn-duration) var(--kn-ease),
+    text-decoration-color var(--kn-duration) var(--kn-ease);
+}
+.pico :where(a:not([role="button"])):is(:hover, :active, :focus) {
+  text-decoration-thickness: 1.5px;
+}
+
+/* Keyboard focus: a brass ring offset from the element, like a gilt border. */
+.pico :focus-visible {
+  border-radius: 1px;
+  outline: 2px solid var(--kn-accent);
+  outline-offset: 3px;
+}
+
+/* -------------------------------------------------------------------------
+ * Rules – a gilt hairline with a centered fleuron.
+ * ---------------------------------------------------------------------- */
+.pico hr {
+  position: relative;
+  overflow: visible;
+  height: 1px;
+  margin: calc(var(--pico-typography-spacing-vertical) * 2) 0;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--kn-rule-strong) 20%, var(--kn-rule-strong) 80%, transparent);
+}
+.pico hr::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 0 0.75rem;
+  content: "❦";
+  transform: translate(-50%, -52%);
+  color: var(--kn-accent-text);
+  background: var(--kn-bg);
+  font-size: 1rem;
+  line-height: 1;
+}
+/* On cards the rule's knock-out must match the card surface. */
+.pico :is(article, .card) hr::after {
+  background: var(--pico-card-background-color);
+}
+
+/* -------------------------------------------------------------------------
+ * Code, kbd, mark, abbr
+ * ---------------------------------------------------------------------- */
+.pico :is(code, kbd, samp, pre) {
+  border-radius: var(--kn-radius);
+  font-size: 0.875em;
+}
+.pico :not(pre) > code {
+  border: 1px solid var(--kn-rule-faint);
+}
+.pico pre {
+  border: 1px solid var(--kn-rule);
+  box-shadow: var(--kn-inset);
+}
+.pico mark {
+  padding: 0.05em 0.2em;
+  border-radius: 1px;
+}
+.pico abbr[title] {
+  cursor: help;
+  text-decoration: underline dotted var(--kn-rule-strong);
+}
+
+/* -------------------------------------------------------------------------
+ * Lists: brass markers; definition lists as a catalog.
+ * ---------------------------------------------------------------------- */
+.pico :is(ul, ol) li::marker {
+  color: var(--kn-accent-text);
+}
+.pico ol li::marker {
+  font-family: var(--kn-font-display);
+  font-weight: 600;
+}
+.pico dt {
+  color: var(--kn-heading);
+  font-family: var(--kn-font-display);
+  font-weight: 600;
+}
+.pico dd {
+  margin: 0 0 0.75rem 1.25rem;
+  color: var(--kn-text-muted);
+}
+
+/* -------------------------------------------------------------------------
+ * Drupal accessibility helpers
+ * ---------------------------------------------------------------------- */
+/* "Skip to main content" – styled as a brass tab when focused.
+   !important is needed to beat core's `.visually-hidden.focusable:focus
+   { position: static !important }`, which would push the page down. */
+.skip-link.focusable:is(:active, :focus) {
+  position: fixed !important;
+  z-index: 1000;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.6rem 1rem;
+  text-decoration: none;
+  color: var(--kn-lampblack);
+  border-radius: var(--kn-radius);
+  background: var(--kn-brass);
+  box-shadow: var(--kn-shadow-md);
+  font-family: var(--kn-font-body);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

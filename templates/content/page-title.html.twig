@@ -1,0 +1,11 @@
+{#
+/**
+ * @file
+ * Page title in Fraunces display (styles: base.css h1, layout.css .page-title).
+ */
+#}
+{{ title_prefix }}
+{% if title %}
+  <h1{{ title_attributes.addClass('page-title') }}>{{ title }}</h1>
+{% endif %}
+{{ title_suffix }}

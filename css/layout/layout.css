@@ -1,0 +1,794 @@
+/**
+ * @file
+ * Page skeleton:
+ *
+ *   .page.pico
+ *     header.site-header > .site-header-bar.container (logo, nav)
+ *     .site-main-bar                      (gilt divider)
+ *     main#main-content.container         (content + optional sidebar)
+ *     footer.site-footer > .site-footer__inner.container
+ *       .site-footer__brand | .site-footer__right (.site-footer__links, .site-footer__legal)
+ */
+
+/* -------------------------------------------------------------------------
+ * Containers
+ * ---------------------------------------------------------------------- */
+.pico .container {
+  max-width: min(var(--kn-container), 100%);
+  padding-inline: 1rem;
+}
+@media (min-width: 768px) {
+  .pico .container {
+    padding-inline: 1.5rem;
+  }
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* -------------------------------------------------------------------------
+ * Header – dark panelled wood with a brass picture-rail beneath.
+ * ---------------------------------------------------------------------- */
+.site-header {
+  position: relative;
+  color: var(--kn-bone);
+  border-bottom: 1px solid rgb(0, 0, 0, 0.6);
+  background-color: #18130f;
+  background-image:
+    var(--kn-grain-leather),
+    /* faint vertical panel seams */ repeating-linear-gradient(90deg, transparent 0 239px, rgb(0, 0, 0, 0.35) 239px 240px, rgb(255, 230, 190, 0.03) 240px 241px),
+    linear-gradient(180deg, #2a221d 0%, #1a1512 100%);
+  background-repeat: repeat; /* undo Pico's global no-repeat for the grain */
+  box-shadow:
+    0 1px 0 color-mix(in sRGB, var(--kn-brass) 25%, transparent) inset,
+    0 -1px 0 rgb(0, 0, 0, 0.5) inset;
+}
+
+.site-header-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  padding-block: 1.1rem;
+}
+
+/* Branding block (block--system-branding-block.html.twig)
+ *
+ * .site-logo--roundel crops the logo to a circle inside a brass ring (best
+ * for square marks); .site-logo--plain shows it as uploaded, up to the
+ * header height. With a light scheme logo (.site-logo--has-light) both
+ * images are printed and only the one for the scheme in use is displayed,
+ * mirroring the dark/light/auto split in tokens.css. */
+.site-branding {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+.site-logo {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+}
+.site-logo__img {
+  display: block;
+}
+.site-logo--plain .site-logo__img {
+  width: auto;
+  max-width: min(14rem, 50vw);
+  height: auto;
+  max-height: 3.25rem;
+}
+.site-logo--roundel {
+  position: relative;
+  width: 3rem;
+  height: 3rem;
+  transition:
+    box-shadow var(--kn-duration) var(--kn-ease),
+    transform var(--kn-duration) var(--kn-ease);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--kn-brass) 55%, transparent),
+    0 0 0 4px #1c1612,
+    0 0 0 5px color-mix(in srgb, var(--kn-brass) 30%, transparent),
+    0 4px 10px rgb(0, 0, 0, 0.6);
+}
+.site-logo--roundel:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px var(--kn-brass-bright),
+    0 0 0 4px #1c1612,
+    0 0 0 5px color-mix(in srgb, var(--kn-brass-bright) 50%, transparent),
+    0 4px 12px rgb(0, 0, 0, 0.7);
+}
+@media (min-width: 768px) {
+  .site-logo--roundel {
+    width: 3.25rem;
+    height: 3.25rem;
+  }
+}
+.site-logo--roundel .site-logo__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-logo--roundel {
+    transition: none;
+  }
+}
+/* Light scheme logo: hidden by default (dark scheme, or auto + OS dark). */
+.site-logo--has-light .site-logo__img--light {
+  display: none;
+}
+:root[data-theme="light"] .site-logo--has-light .site-logo__img--dark,
+:root [data-theme="light"] .site-logo--has-light .site-logo__img--dark {
+  display: none;
+}
+:root[data-theme="light"] .site-logo--has-light .site-logo__img--light,
+:root [data-theme="light"] .site-logo--has-light .site-logo__img--light {
+  display: block;
+}
+@media (prefers-color-scheme: light) {
+  :root[data-theme="auto"] .site-logo--has-light .site-logo__img--dark {
+    display: none;
+  }
+  :root[data-theme="auto"] .site-logo--has-light .site-logo__img--light {
+    display: block;
+  }
+}
+.site-branding__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.pico .site-branding__name {
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  color: #f1e8d8;
+  font-family: var(--kn-font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variation-settings: var(--kn-fraunces-display);
+}
+.pico .site-branding__name:hover {
+  color: var(--kn-brass-bright);
+}
+.site-branding__slogan {
+  color: var(--kn-bone-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+/* -------------------------------------------------------------------------
+ * Header row (region--header.html.twig): branding on the left, then the
+ * main menu and the account menu on one line at the right, the account
+ * menu set off by a brass hairline with a diamond. Under 768px the menus
+ * drop to their own line below the branding, still side by side.
+ * ---------------------------------------------------------------------- */
+.site-header-region {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  min-width: 0;
+}
+.site-header-region > .site-branding {
+  margin-inline-end: auto;
+}
+
+/* Header navigation: main menu (menu--main.html.twig), account menu, and
+   anything placed in the primary_menu region. */
+.pico .site-header nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+/* :nth-of-type(n) matches Pico's `nav ul:first-of-type` / `:last-of-type`
+   specificity, which would otherwise pull the lists out with negative
+   margins. */
+.pico .site-header nav ul:nth-of-type(n) {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+}
+.pico .site-header nav li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pico .site-header nav a {
+  --pico-color: var(--kn-bone);
+
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 0.45rem 0.85rem;
+  transition:
+    color var(--kn-duration) var(--kn-ease),
+    border-color var(--kn-duration) var(--kn-ease),
+    background-color var(--kn-duration) var(--kn-ease),
+    box-shadow var(--kn-duration) var(--kn-ease);
+  white-space: nowrap;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  color: var(--pico-color);
+  border: 1px solid transparent;
+  border-radius: var(--kn-radius);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+  font-variant-caps: all-small-caps;
+}
+.pico .site-header nav a:hover,
+.pico .site-header nav a:focus-visible {
+  --pico-color: var(--kn-brass-bright);
+
+  border-color: color-mix(in sRGB, var(--kn-brass) 35%, transparent);
+  background: color-mix(in sRGB, var(--kn-brass) 6%, transparent);
+}
+.pico .site-header nav a:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px rgb(0, 0, 0, 0.5),
+    0 0 0 3px var(--kn-brass-bright);
+}
+/* Active trail: a brass plate. */
+.pico .site-header nav a:is(.is-active, [aria-current="page"]) {
+  --pico-color: var(--kn-brass-bright);
+
+  border-color: color-mix(in sRGB, var(--kn-brass) 55%, transparent);
+  background: linear-gradient(180deg, color-mix(in sRGB, var(--kn-brass) 16%, transparent), color-mix(in sRGB, var(--kn-brass) 5%, transparent));
+}
+
+/* Account menu: after a brass hairline with a diamond at its middle. */
+.pico .site-header .block-system-menu-blockaccount {
+  position: relative;
+  padding-inline-start: 1.25rem;
+}
+.pico .site-header .block-system-menu-blockaccount::before,
+.pico .site-header .block-system-menu-blockaccount::after {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  content: "";
+}
+.pico .site-header .block-system-menu-blockaccount::before {
+  width: 1px;
+  height: 1.9rem;
+  transform: translateY(-50%);
+  background: linear-gradient(180deg, transparent, color-mix(in sRGB, var(--kn-brass) 60%, transparent) 25%, color-mix(in sRGB, var(--kn-brass) 60%, transparent) 75%, transparent);
+}
+.pico .site-header .block-system-menu-blockaccount::after {
+  width: 5px;
+  height: 5px;
+  margin-left: -2px;
+  transform: translateY(-50%) rotate(45deg);
+  background: var(--kn-brass);
+  box-shadow: 0 0 0 2px #1d1714;
+}
+.pico .site-header .block-system-menu-blockaccount a {
+  font-size: 0.98rem;
+}
+/* Its last link (Log in / Log out) is an engraved brass-edged plate. */
+.pico .site-header .block-system-menu-blockaccount li:last-child a {
+  --pico-color: var(--kn-brass-bright);
+
+  border-color: color-mix(in sRGB, var(--kn-brass) 50%, transparent);
+  background: linear-gradient(180deg, color-mix(in sRGB, var(--kn-brass) 12%, transparent), color-mix(in sRGB, var(--kn-brass) 3%, transparent));
+  box-shadow:
+    inset 0 1px 0 rgb(255, 236, 200, 0.08),
+    0 1px 2px rgb(0, 0, 0, 0.45);
+}
+.pico .site-header .block-system-menu-blockaccount li:last-child a:hover {
+  --pico-color: #f1e8d8;
+
+  border-color: var(--kn-brass-bright);
+  background: linear-gradient(180deg, color-mix(in sRGB, var(--kn-brass) 24%, transparent), color-mix(in sRGB, var(--kn-brass) 8%, transparent));
+}
+
+@media (max-width: 767.98px) {
+  .site-header-region {
+    gap: 0.6rem 0.5rem;
+  }
+  .site-header-region > .site-branding {
+    flex-basis: 100%;
+  }
+  .pico .site-header nav a {
+    padding: 0.4rem 0.55rem;
+    letter-spacing: 0.07em;
+    font-size: 0.98rem;
+  }
+  .pico .site-header .block-system-menu-blockaccount {
+    margin-inline-start: auto;
+    padding-inline-start: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pico .site-header nav a {
+    transition: none;
+  }
+}
+
+/* Header search button (the "Show a search button in the header" theme
+   setting): a brass-edged plate with a magnifier, after the menus. */
+.pico .site-search-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.85rem;
+  transition:
+    color var(--kn-duration) var(--kn-ease),
+    border-color var(--kn-duration) var(--kn-ease),
+    background-color var(--kn-duration) var(--kn-ease);
+  white-space: nowrap;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  color: var(--kn-bone);
+  border: 1px solid color-mix(in sRGB, var(--kn-brass) 45%, transparent);
+  border-radius: var(--kn-radius);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+  gap: 0.45rem;
+  font-variant-caps: all-small-caps;
+}
+.pico .site-search-button::before {
+  width: 1rem;
+  height: 1rem;
+  content: "";
+  background: currentColor;
+  -webkit-mask: var(--pico-icon-search) center / contain no-repeat;
+  mask: var(--pico-icon-search) center / contain no-repeat;
+}
+.pico .site-search-button:is(:hover, :focus-visible) {
+  color: var(--kn-brass-bright);
+  border-color: var(--kn-brass-bright);
+  background: color-mix(in sRGB, var(--kn-brass) 10%, transparent);
+}
+:root[data-theme="light"] .pico .site-search-button,
+:root [data-theme="light"] .pico .site-search-button {
+  color: var(--kn-lampblack);
+}
+:root[data-theme="light"] .pico .site-search-button:is(:hover, :focus-visible),
+:root [data-theme="light"] .pico .site-search-button:is(:hover, :focus-visible) {
+  color: var(--kn-brass-ink);
+}
+@media (prefers-color-scheme: light) {
+  html[data-theme="auto"] .pico .site-search-button {
+    color: var(--kn-lampblack);
+  }
+  html[data-theme="auto"] .pico .site-search-button:is(:hover, :focus-visible) {
+    color: var(--kn-brass-ink);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pico .site-search-button {
+    transition: none;
+  }
+}
+
+/* Gilt picture-rail under the header (two hairlines, like book gilding). */
+.site-main-bar {
+  height: 6px;
+  background:
+    linear-gradient(90deg, transparent, var(--kn-brass) 12%, var(--kn-brass) 88%, transparent) top / 100% 1px no-repeat,
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--kn-brass) 45%, transparent) 18%, color-mix(in srgb, var(--kn-brass) 45%, transparent) 82%, transparent) bottom / 100% 1px no-repeat,
+    linear-gradient(180deg, #1a1512, transparent);
+}
+
+/* -------------------------------------------------------------------------
+ * Header & footer, light scheme: data-theme="light" (unconditional) or
+ * "auto" + OS light (media-gated), the same pairing as tokens.css. The
+ * rules above are the dark default; these re-point the panel backgrounds,
+ * ink colors and the logo ring's dark gap at parchment values. Accent
+ * tones read on either background, so hover and active states are shared.
+ * ---------------------------------------------------------------------- */
+:root[data-theme="light"] .site-header,
+:root [data-theme="light"] .site-header {
+  color: var(--kn-lampblack);
+  border-bottom-color: color-mix(in sRGB, var(--kn-brass-ink) 22%, transparent);
+  background-color: #faf5ea;
+  background-image: var(--kn-grain-paper), repeating-linear-gradient(90deg, transparent 0 239px, color-mix(in srgb, var(--kn-brass-ink) 10%, transparent) 239px 240px, rgb(255, 255, 255, 0.5) 240px 241px), linear-gradient(180deg, #faf5ea 0%, #f1e9d7 100%);
+  box-shadow:
+    0 1px 0 rgb(255, 255, 255, 0.6) inset,
+    0 -1px 0 color-mix(in sRGB, var(--kn-brass-ink) 12%, transparent) inset;
+}
+:root[data-theme="light"] .site-logo--roundel,
+:root [data-theme="light"] .site-logo--roundel {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--kn-brass-ink) 50%, transparent),
+    0 0 0 4px #f1e9d7,
+    0 0 0 5px color-mix(in srgb, var(--kn-brass-ink) 28%, transparent),
+    0 4px 10px color-mix(in srgb, var(--kn-brass-ink) 25%, transparent);
+}
+:root[data-theme="light"] .site-logo--roundel:hover,
+:root [data-theme="light"] .site-logo--roundel:hover {
+  box-shadow:
+    0 0 0 1px var(--kn-brass-bright),
+    0 0 0 4px #f1e9d7,
+    0 0 0 5px color-mix(in srgb, var(--kn-brass-ink) 40%, transparent),
+    0 4px 12px color-mix(in srgb, var(--kn-brass-ink) 35%, transparent);
+}
+:root[data-theme="light"] .pico .site-branding__name,
+:root [data-theme="light"] .pico .site-branding__name {
+  color: #1a1715;
+}
+:root[data-theme="light"] .site-branding__slogan,
+:root [data-theme="light"] .site-branding__slogan {
+  color: var(--kn-lampblack-muted);
+}
+:root[data-theme="light"] .pico .site-header nav a,
+:root [data-theme="light"] .pico .site-header nav a {
+  --pico-color: var(--kn-lampblack);
+}
+:root[data-theme="light"] .pico .site-header nav a:is(:hover, :focus-visible, .is-active, [aria-current="page"]),
+:root [data-theme="light"] .pico .site-header nav a:is(:hover, :focus-visible, .is-active, [aria-current="page"]),
+:root[data-theme="light"] .pico .site-header .block-system-menu-blockaccount li:last-child a,
+:root [data-theme="light"] .pico .site-header .block-system-menu-blockaccount li:last-child a {
+  --pico-color: var(--kn-brass-ink);
+}
+:root[data-theme="light"] .pico .site-header .block-system-menu-blockaccount li:last-child a,
+:root [data-theme="light"] .pico .site-header .block-system-menu-blockaccount li:last-child a {
+  box-shadow:
+    inset 0 1px 0 rgb(255, 255, 255, 0.6),
+    0 1px 2px color-mix(in sRGB, var(--kn-brass-ink) 18%, transparent);
+}
+:root[data-theme="light"] .pico .site-header .block-system-menu-blockaccount::after,
+:root [data-theme="light"] .pico .site-header .block-system-menu-blockaccount::after {
+  box-shadow: 0 0 0 2px #f6efe0;
+}
+:root[data-theme="light"] .site-main-bar,
+:root [data-theme="light"] .site-main-bar {
+  background:
+    linear-gradient(90deg, transparent, var(--kn-brass) 12%, var(--kn-brass) 88%, transparent) top / 100% 1px no-repeat,
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--kn-brass) 45%, transparent) 18%, color-mix(in srgb, var(--kn-brass) 45%, transparent) 82%, transparent) bottom / 100% 1px no-repeat,
+    linear-gradient(180deg, #f1e9d7, transparent);
+}
+:root[data-theme="light"] .site-footer,
+:root [data-theme="light"] .site-footer {
+  color: var(--kn-lampblack-muted);
+  border-top-color: color-mix(in sRGB, var(--kn-brass-ink) 22%, transparent);
+  background: var(--kn-grain-paper), linear-gradient(180deg, #f4efe3, #ece3cf);
+  box-shadow: 0 1px 0 rgb(255, 255, 255, 0.5) inset;
+}
+:root[data-theme="light"] .pico .site-footer a,
+:root [data-theme="light"] .pico .site-footer a {
+  --pico-color: var(--kn-lampblack);
+}
+
+/* color_scheme_mode: auto, OS prefers light — the exact same
+   declarations, gated behind the media query instead of applying
+   unconditionally (same 2c pattern as tokens.css: nothing to "turn back
+   off" for OS-dark, since a non-matching media query means the rule
+   never applied in the first place and the dark defaults above, still
+   unconditional and untouched, are all that's in effect). */
+@media (prefers-color-scheme: light) {
+  html[data-theme="auto"] .site-header {
+    color: var(--kn-lampblack);
+    border-bottom-color: color-mix(in sRGB, var(--kn-brass-ink) 22%, transparent);
+    background-color: #faf5ea;
+    background-image: var(--kn-grain-paper), repeating-linear-gradient(90deg, transparent 0 239px, color-mix(in srgb, var(--kn-brass-ink) 10%, transparent) 239px 240px, rgb(255, 255, 255, 0.5) 240px 241px), linear-gradient(180deg, #faf5ea 0%, #f1e9d7 100%);
+    box-shadow:
+      0 1px 0 rgb(255, 255, 255, 0.6) inset,
+      0 -1px 0 color-mix(in sRGB, var(--kn-brass-ink) 12%, transparent) inset;
+  }
+  html[data-theme="auto"] .site-logo--roundel {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--kn-brass-ink) 50%, transparent),
+      0 0 0 4px #f1e9d7,
+      0 0 0 5px color-mix(in srgb, var(--kn-brass-ink) 28%, transparent),
+      0 4px 10px color-mix(in srgb, var(--kn-brass-ink) 25%, transparent);
+  }
+  html[data-theme="auto"] .site-logo--roundel:hover {
+    box-shadow:
+      0 0 0 1px var(--kn-brass-bright),
+      0 0 0 4px #f1e9d7,
+      0 0 0 5px color-mix(in srgb, var(--kn-brass-ink) 40%, transparent),
+      0 4px 12px color-mix(in srgb, var(--kn-brass-ink) 35%, transparent);
+  }
+  html[data-theme="auto"] .pico .site-branding__name {
+    color: #1a1715;
+  }
+  html[data-theme="auto"] .site-branding__slogan {
+    color: var(--kn-lampblack-muted);
+  }
+  html[data-theme="auto"] .pico .site-header nav a {
+    --pico-color: var(--kn-lampblack);
+  }
+  html[data-theme="auto"] .pico .site-header nav a:is(:hover, :focus-visible, .is-active, [aria-current="page"]),
+  html[data-theme="auto"] .pico .site-header .block-system-menu-blockaccount li:last-child a {
+    --pico-color: var(--kn-brass-ink);
+  }
+  html[data-theme="auto"] .pico .site-header .block-system-menu-blockaccount li:last-child a {
+    box-shadow:
+      inset 0 1px 0 rgb(255, 255, 255, 0.6),
+      0 1px 2px color-mix(in sRGB, var(--kn-brass-ink) 18%, transparent);
+  }
+  html[data-theme="auto"] .pico .site-header .block-system-menu-blockaccount::after {
+    box-shadow: 0 0 0 2px #f6efe0;
+  }
+  html[data-theme="auto"] .site-main-bar {
+    background:
+      linear-gradient(90deg, transparent, var(--kn-brass) 12%, var(--kn-brass) 88%, transparent) top / 100% 1px no-repeat,
+      linear-gradient(90deg, transparent, color-mix(in srgb, var(--kn-brass) 45%, transparent) 18%, color-mix(in srgb, var(--kn-brass) 45%, transparent) 82%, transparent) bottom / 100% 1px no-repeat,
+      linear-gradient(180deg, #f1e9d7, transparent);
+  }
+  html[data-theme="auto"] .site-footer {
+    color: var(--kn-lampblack-muted);
+    border-top-color: color-mix(in sRGB, var(--kn-brass-ink) 22%, transparent);
+    background: var(--kn-grain-paper), linear-gradient(180deg, #f4efe3, #ece3cf);
+    box-shadow: 0 1px 0 rgb(255, 255, 255, 0.5) inset;
+  }
+  html[data-theme="auto"] .pico .site-footer a {
+    --pico-color: var(--kn-lampblack);
+  }
+}
+
+/* -------------------------------------------------------------------------
+ * Main
+ * ---------------------------------------------------------------------- */
+.pico main.site-main {
+  flex: 1 0 auto;
+  width: 100%;
+  padding-block: 2.5rem 4rem;
+}
+/* Main content font (the "Main content font" theme setting). The header
+   and footer sit outside <main> and keep the display/body pair.
+   - font-family is set directly because body text inherits the computed
+     value from body (base.css); the tokens are redeclared for component
+     rules that read var(--kn-font-body) or var(--kn-font-display) directly.
+   - --pico-font-size is Pico's master scale, so everything sized off it
+     shrinks together. The var() inside calc() resolves to the inherited
+     value from :root's responsive tiers (tokens.css), so the breakpoint
+     steps still apply, about 6% smaller at each. */
+.site-main--font-sans {
+  --kn-font-body: var(--kn-font-sans);
+  --kn-font-display: var(--kn-font-sans);
+  --pico-font-size: calc(var(--pico-font-size) * 0.94);
+
+  font-family: var(--kn-font-sans);
+}
+.site-main:focus {
+  outline: none;
+}
+
+@media (min-width: 1024px) {
+  .site-main--with-sidebar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: 3rem;
+    align-items: start;
+  }
+}
+
+.site-main__content > * + * {
+  margin-top: var(--pico-block-spacing-vertical);
+}
+
+/* Readable measure for long-form node content. */
+.node__content,
+.text-content {
+  max-width: var(--kn-measure);
+}
+
+/* Page title block */
+.pico .page-title {
+  margin-bottom: 1.5rem;
+}
+
+/* Sidebar blocks sit on tobacco leather with a brass-ruled heading. */
+.site-main__sidebar .block {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--kn-rule);
+  border-radius: var(--kn-radius);
+  background: var(--kn-surface);
+  box-shadow: var(--kn-shadow-sm);
+}
+.pico .site-main__sidebar .block > h2 {
+  --pico-font-size: 0.95rem;
+
+  padding-bottom: 0.5rem;
+  letter-spacing: 0.12em;
+  border-bottom: 1px solid var(--kn-rule);
+  font-variant-caps: all-small-caps;
+}
+
+/* -------------------------------------------------------------------------
+ * Icon navigation grid: put .nav-grid on a list of .nav-grid__item links,
+ * each with a .nav-grid__icon (inline SVG), .nav-grid__label and
+ * .nav-grid__desc (see the style guide).
+ * Brass-plated drawer labels on a cabinet.
+ * ---------------------------------------------------------------------- */
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13.5rem), 1fr));
+  gap: 1rem;
+  margin-block: 0 2.5rem;
+}
+.pico .nav-grid__item {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  padding: 1rem 1.1rem;
+  column-gap: 0.9rem;
+  transition:
+    transform var(--kn-duration) var(--kn-ease),
+    box-shadow var(--kn-duration) var(--kn-ease),
+    border-color var(--kn-duration) var(--kn-ease);
+  text-decoration: none;
+  color: var(--kn-text);
+  border: 1px solid var(--kn-rule);
+  border-radius: var(--kn-radius);
+  background: var(--kn-grain-leather), linear-gradient(180deg, var(--kn-surface-raised), var(--kn-surface));
+  box-shadow: var(--kn-shadow-md);
+}
+/* Inner gilt line, inset like a tooled leather border. */
+.nav-grid__item::before {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+  border: 1px solid color-mix(in sRGB, var(--kn-brass) 14%, transparent);
+  border-radius: 1px;
+  inset: 4px;
+}
+.pico .nav-grid__item:hover,
+.pico .nav-grid__item:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--kn-rule-strong);
+  box-shadow: var(--kn-shadow-lg);
+}
+.nav-grid__icon {
+  display: grid;
+  grid-row: 1 / span 2;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, color-mix(in sRGB, var(--kn-brass) 60%, white), var(--kn-brass) 45%, color-mix(in sRGB, var(--kn-brass) 70%, black) 100%);
+  box-shadow:
+    0 1px 0 rgb(255, 255, 255, 0.25) inset,
+    0 2px 4px rgb(0, 0, 0, 0.5);
+}
+.nav-grid__icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: var(--kn-lampblack);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.nav-grid__label {
+  color: var(--kn-heading);
+  font-family: var(--kn-font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.nav-grid__desc {
+  color: var(--kn-text-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+/* -------------------------------------------------------------------------
+ * Footer – the bottom shelf.
+ * ---------------------------------------------------------------------- */
+.site-footer {
+  margin-top: auto;
+  color: var(--kn-bone-muted);
+  border-top: 1px solid rgb(0, 0, 0, 0.6);
+  background: var(--kn-grain-leather), linear-gradient(180deg, #16120f, #110e0c);
+  box-shadow: 0 1px 0 color-mix(in sRGB, var(--kn-brass) 35%, transparent) inset;
+  font-size: 0.92rem;
+}
+.site-footer__inner {
+  display: grid;
+  gap: 2rem;
+  padding-block: 2.75rem 2rem;
+}
+@media (min-width: 768px) {
+  .site-footer__inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 3rem;
+  }
+}
+.site-footer__brand p {
+  margin-bottom: 0.5rem;
+}
+.site-footer__powered {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.site-footer__druplicon {
+  width: 1.1rem;
+  height: auto;
+  opacity: 0.6;
+  filter: sepia(1) saturate(0.6);
+}
+.site-footer__theme-name {
+  color: var(--kn-brass);
+  font-family: var(--kn-font-display);
+}
+
+.site-footer__links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 1.5rem;
+}
+.pico .site-footer__col-heading,
+.pico .site-footer__link-col h2 {
+  --pico-font-size: 0.95rem;
+  --pico-color: var(--kn-brass);
+
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  letter-spacing: 0.14em;
+  border-bottom: 1px solid color-mix(in sRGB, var(--kn-brass) 25%, transparent);
+  font-weight: 600;
+  font-variant-caps: all-small-caps;
+}
+.pico .site-footer :is(.site-footer__list, .site-footer__link-col ul) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pico .site-footer :is(.site-footer__list, .site-footer__link-col ul) li {
+  margin-bottom: 0.35rem;
+  list-style: none;
+}
+.pico .site-footer a {
+  --pico-color: var(--kn-bone);
+  --pico-underline: transparent;
+
+  text-decoration-color: transparent;
+}
+.pico .site-footer a:hover {
+  --pico-color: var(--kn-brass-bright);
+
+  text-decoration-color: currentColor;
+}
+
+.site-footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgb(227, 222, 216, 0.08);
+  font-size: 0.85rem;
+}
+
+/* -------------------------------------------------------------------------
+ * Menus outside the header: Pico lays out every <nav> as a horizontal
+ * flex bar; menus in the footer and sidebar are vertical lists instead.
+ * ---------------------------------------------------------------------- */
+.pico :is(.site-footer, .site-main__sidebar) nav,
+.pico :is(.site-footer, .site-main__sidebar) nav ul {
+  display: block;
+}
+.pico :is(.site-footer, .site-main__sidebar) nav li {
+  display: block;
+  padding: 0;
+}
+.pico :is(.site-footer, .site-main__sidebar) nav :is(a, [role="link"]) {
+  margin: 0;
+  padding: 0.15rem 0;
+}

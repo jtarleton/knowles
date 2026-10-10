@@ -1,0 +1,472 @@
+/**
+ * @file
+ * Form elements: things on a writing desk.
+ *
+ * Works with Pico's native-element styling and Drupal's form markup
+ * (stable9): .form-item, label.form-required, label.option,
+ * .description / .form-item__description, .form-item--error-message,
+ * input.error / [aria-invalid], fieldset/legend, details, .form-managed-file.
+ *
+ *   Text inputs – inset leather-framed wells with a brass focus glow.
+ *   Textarea    – ruled ledger paper.
+ *   Select      – brass chevron, same well as inputs.
+ *   Checkbox    – brass-cornered box, fills with polished brass.
+ *   Radio       – brass ring; when chosen, an oxblood wax seal.
+ *   File        – a dashed "drop tray" with a leather tab button.
+ */
+
+/* -------------------------------------------------------------------------
+ * Form item rhythm & labels
+ * ---------------------------------------------------------------------- */
+.pico .form-item,
+.pico .js-form-item {
+  margin-bottom: 1.35rem;
+}
+.pico .form-item > :last-child,
+.pico .form-item > :is(input, select, textarea):has(+ :is(.description, .form-item__description, .form-item--error-message, .form-item__error-message)) {
+  margin-bottom: 0;
+}
+
+.pico label,
+.pico legend,
+.pico .fieldset__label,
+.pico .form-item__label {
+  letter-spacing: 0.01em;
+  color: var(--kn-heading);
+  font-family: var(--kn-font-body);
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+.pico label:not(.option) {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+/* Required marker: a small brass asterism instead of a red star. */
+.pico .form-required::after {
+  display: inline-block;
+  margin-inline-start: 0.25em;
+  content: "*";
+  color: var(--kn-accent-text);
+  font-family: var(--kn-font-display);
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Help text: italic marginalia. */
+.pico :is(.description, .form-item__description, small.helper, [id$="--description"]) {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--kn-text-muted);
+  font-size: 0.88rem;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+/* -------------------------------------------------------------------------
+ * Text-like inputs, select, textarea: shared "inkwell" treatment.
+ * ---------------------------------------------------------------------- */
+.pico :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"]), select, textarea) {
+  transition:
+    border-color var(--kn-duration) var(--kn-ease),
+    box-shadow var(--kn-duration) var(--kn-ease),
+    background-color var(--kn-duration) var(--kn-ease);
+  color: var(--pico-form-element-color);
+  border: 1px solid var(--pico-form-element-border-color);
+  border-radius: var(--kn-radius);
+  background-color: var(--pico-form-element-background-color);
+  box-shadow: var(--kn-inset);
+  font-family: var(--kn-font-body);
+  font-size: 1rem;
+}
+
+.pico :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"]), select, textarea):hover {
+  border-color: var(--kn-rule-strong);
+}
+
+/* Focus: brass border + soft lamp glow, the inset stays. */
+.pico :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="image"]), select, textarea):focus {
+  --pico-box-shadow: 0 0 0 3px var(--pico-form-element-focus-color);
+
+  border-color: var(--kn-accent);
+  outline: none;
+  box-shadow:
+    var(--kn-inset),
+    0 0 0 3px var(--pico-form-element-focus-color),
+    0 0 18px -4px color-mix(in sRGB, var(--kn-brass) 35%, transparent);
+}
+
+.pico ::placeholder {
+  opacity: 1;
+  color: var(--pico-form-element-placeholder-color);
+  font-style: italic;
+}
+
+/* Brass chevron for selects (icon comes from tokens.css). */
+.pico select:not([multiple], [size]) {
+  background-position: center right 0.8rem;
+  background-size: 0.95rem auto;
+}
+.pico select[multiple] option:checked {
+  background: color-mix(in sRGB, var(--kn-accent) 30%, transparent);
+}
+
+/* -------------------------------------------------------------------------
+ * Textarea – ruled ledger paper with a red(oxblood) margin line.
+ * The rule spacing equals the line-height so writing sits on the lines.
+ * ---------------------------------------------------------------------- */
+.pico textarea {
+  --kn-ledger-line: 1.75rem;
+
+  min-height: calc(var(--kn-ledger-line) * 5 + 1.2rem);
+  padding: 0.55rem 0.9rem 0.65rem 2.4rem;
+  resize: vertical;
+  background-image: linear-gradient(90deg, transparent 1.6rem, rgb(154, 60, 62, 0.45) 1.6rem, rgb(154, 60, 62, 0.45) calc(1.6rem + 1px), transparent calc(1.6rem + 1px)), repeating-linear-gradient(180deg, transparent 0, transparent calc(var(--kn-ledger-line) - 1px), var(--kn-rule-faint) calc(var(--kn-ledger-line) - 1px), var(--kn-rule-faint) var(--kn-ledger-line));
+  background-repeat: repeat-y; /* lines continue as the entry scrolls */
+  background-attachment: local;
+  background-position:
+    0 0,
+    0 0.55rem;
+  line-height: var(--kn-ledger-line);
+}
+/* Parchment wells get slightly stronger rules to stay visible. */
+:root[data-theme="light"] .pico textarea,
+.surface-parchment textarea {
+  background-image: linear-gradient(90deg, transparent 1.6rem, rgb(110, 31, 35, 0.35) 1.6rem, rgb(110, 31, 35, 0.35) calc(1.6rem + 1px), transparent calc(1.6rem + 1px)), repeating-linear-gradient(180deg, transparent 0, transparent calc(var(--kn-ledger-line) - 1px), color-mix(in sRGB, var(--kn-hunter) 18%, transparent) calc(var(--kn-ledger-line) - 1px), color-mix(in sRGB, var(--kn-hunter) 18%, transparent) var(--kn-ledger-line));
+}
+
+/* -------------------------------------------------------------------------
+ * Validation (Drupal adds .error and aria-invalid="true")
+ * ---------------------------------------------------------------------- */
+.pico :is(input, select, textarea):is(.error, [aria-invalid="true"]) {
+  border-color: var(--kn-danger);
+  box-shadow:
+    var(--kn-inset),
+    0 0 0 1px color-mix(in sRGB, var(--kn-danger) 40%, transparent);
+}
+.pico :is(.form-item--error-message, .form-item__error-message) {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+  color: var(--kn-danger);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.pico :is(.form-item--error-message, .form-item__error-message)::before {
+  content: "✕";
+  font-size: 0.8em;
+  line-height: 1.7;
+}
+
+/* -------------------------------------------------------------------------
+ * Checkboxes – brass-edged box; filled brass plate when checked.
+ * ---------------------------------------------------------------------- */
+.pico [type="checkbox"]:not([role="switch"]) {
+  --pico-border-color: var(--kn-rule-strong);
+
+  width: 1.2em;
+  height: 1.2em;
+  transition:
+    background-color var(--kn-duration) var(--kn-ease),
+    border-color var(--kn-duration) var(--kn-ease),
+    box-shadow var(--kn-duration) var(--kn-ease);
+  border: 1px solid var(--pico-border-color);
+  border-radius: 2px;
+  background-color: var(--pico-form-element-background-color);
+  box-shadow: var(--kn-inset);
+}
+.pico [type="checkbox"]:not([role="switch"]):hover {
+  --pico-border-color: var(--kn-accent);
+}
+.pico [type="checkbox"]:not([role="switch"]):is(:checked, :indeterminate) {
+  --pico-border-color: color-mix(in sRGB, var(--kn-brass) 70%, black);
+
+  background-color: var(--kn-brass);
+  background-size: 0.8em auto;
+  box-shadow:
+    inset 0 1px 0 rgb(255, 244, 218, 0.55),
+    0 1px 2px rgb(0, 0, 0, 0.35);
+}
+
+/* -------------------------------------------------------------------------
+ * Radios – a brass ring; when chosen, an oxblood wax seal is pressed in.
+ * ---------------------------------------------------------------------- */
+.pico [type="radio"] {
+  --pico-border-color: var(--kn-rule-strong);
+
+  width: 1.25em;
+  height: 1.25em;
+  transition:
+    border-color var(--kn-duration) var(--kn-ease),
+    box-shadow var(--kn-duration) var(--kn-ease);
+  border: 1px solid var(--pico-border-color);
+  background-color: var(--pico-form-element-background-color);
+  box-shadow: var(--kn-inset);
+}
+.pico [type="radio"]:hover {
+  --pico-border-color: var(--kn-accent);
+}
+.pico [type="radio"]:checked,
+.pico [type="radio"]:checked:is(:active, :focus) {
+  --pico-border-color: var(--kn-brass);
+
+  border-width: 2px;
+  background-color: var(--pico-form-element-background-color);
+  background-image: radial-gradient(circle at 40% 35%, #8e4a4b 0, var(--kn-oxblood) 38%, #3a1a1b 58%, transparent 60%);
+  background-size: 100% 100%;
+  box-shadow:
+    0 0 0 1px rgb(0, 0, 0, 0.3),
+    0 1px 3px rgb(0, 0, 0, 0.4);
+}
+
+/* Focus ring for both. */
+.pico :is([type="checkbox"], [type="radio"]):focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--kn-bg),
+    0 0 0 4px var(--kn-accent);
+}
+
+/* Drupal markup: <div class="form-type-checkbox"><input> <label class="option"> */
+.pico :is(.form-type-checkbox, .form-type-radio, .js-form-type-checkbox, .js-form-type-radio) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin-bottom: 0.6rem;
+}
+.pico :is(.form-type-checkbox, .form-type-radio) > :is([type="checkbox"], [type="radio"]) {
+  flex: none;
+  margin-top: 0.22em;
+}
+.pico label.option {
+  flex: 1;
+  margin: 0;
+  cursor: pointer;
+  color: var(--kn-text);
+  font-weight: 400;
+}
+.pico :is(.form-type-checkbox, .form-type-radio) > .description {
+  flex-basis: 100%;
+  margin-top: 0.15rem;
+  padding-inline-start: 1.75em;
+}
+/* Radios/checkboxes groups (Drupal wraps them in .form-checkboxes / .form-radios) */
+.pico :is(.form-checkboxes, .form-radios) {
+  padding: 0.25rem 0 0;
+}
+
+/* Switch (Pico role="switch") – a brass toggle on green baize. */
+.pico [type="checkbox"][role="switch"] {
+  --pico-border-color: var(--kn-rule);
+
+  box-shadow: var(--kn-inset);
+}
+.pico [type="checkbox"][role="switch"]::before {
+  background: radial-gradient(circle at 35% 30%, color-mix(in sRGB, var(--kn-brass) 60%, white), var(--kn-brass) 50%, color-mix(in sRGB, var(--kn-brass) 70%, black));
+}
+
+/* -------------------------------------------------------------------------
+ * File upload – a dashed tray, with the picker as a leather tab.
+ * ---------------------------------------------------------------------- */
+.pico :is(.form-managed-file, .js-form-managed-file, .form-type-file .form-file-wrapper),
+.pico .mt-file-tray {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem;
+  border: 1px dashed var(--kn-rule-strong);
+  border-radius: var(--kn-radius-lg);
+  background: repeating-linear-gradient(135deg, transparent 0 10px, color-mix(in sRGB, var(--kn-accent) 4%, transparent) 10px 20px), var(--pico-form-element-background-color);
+  box-shadow: var(--kn-inset);
+}
+.pico [type="file"] {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  color: var(--kn-text-muted);
+  border: 0;
+  background: none;
+  font-family: var(--kn-font-body);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+.pico :is(.form-managed-file, .js-form-managed-file) [type="file"] {
+  flex: 1 1 16rem;
+  width: auto;
+}
+.pico [type="file"]::file-selector-button {
+  --pico-background-color: var(--kn-hunter);
+
+  margin-inline-end: 1rem;
+  padding: 0.45rem 1.1rem 0.5rem;
+  cursor: pointer;
+  transition:
+    filter var(--kn-duration) var(--kn-ease),
+    transform var(--kn-duration) var(--kn-ease);
+  letter-spacing: 0.09em;
+  color: #efe8dc;
+  border: 1px solid #1f2c23;
+  border-radius: var(--kn-radius);
+  outline: 1px dashed color-mix(in sRGB, var(--kn-brass) 55%, transparent);
+  outline-offset: -5px;
+  background: var(--kn-grain-leather), linear-gradient(180deg, #4a6352 0%, var(--kn-hunter) 55%, #2e4035 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255, 255, 255, 0.12),
+    0 1px 2px rgb(0, 0, 0, 0.4);
+  font-family: var(--kn-font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  font-style: normal;
+  font-variant-caps: all-small-caps;
+}
+.pico [type="file"]:is(:hover, :focus-visible)::file-selector-button {
+  filter: brightness(1.12);
+}
+.pico [type="file"]:active::file-selector-button {
+  transform: translateY(1px);
+}
+.pico [type="file"]:focus-visible {
+  outline: none;
+}
+.pico [type="file"]:focus-visible::file-selector-button {
+  box-shadow:
+    0 0 0 2px var(--kn-bg),
+    0 0 0 4px var(--kn-accent);
+}
+/* Uploaded-file row inside Drupal's managed file widget. */
+.pico :is(.form-managed-file, .js-form-managed-file) .file {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--kn-font-mono);
+  font-size: 0.85rem;
+}
+.pico :is(.form-managed-file, .js-form-managed-file) .file::before {
+  content: "✉";
+  color: var(--kn-accent-text);
+}
+.pico :is(.form-managed-file, .js-form-managed-file) + .description {
+  margin-top: 0.5rem;
+}
+
+/* -------------------------------------------------------------------------
+ * Fieldsets & details – brass-plated nameplates on a leather folio.
+ * ---------------------------------------------------------------------- */
+.pico fieldset:not(.form-radios, .form-checkboxes, [role="group"]) {
+  margin: 0 0 1.5rem;
+  padding: 1.25rem 1.25rem 0.5rem;
+  border: 1px solid var(--kn-rule);
+  border-radius: var(--kn-radius);
+  background: color-mix(in sRGB, var(--kn-surface) 60%, transparent);
+}
+.pico fieldset:not(.form-radios, .form-checkboxes, [role="group"]) > legend {
+  float: none;
+  width: auto;
+  margin-bottom: 0;
+  padding: 0.15rem 0.7rem 0.2rem;
+  letter-spacing: 0.1em;
+  color: var(--kn-accent-text);
+  border: 1px solid var(--kn-rule-strong);
+  border-radius: 2px;
+  background: var(--kn-bg);
+  font-family: var(--kn-font-display);
+  font-size: 1rem;
+  font-variant-caps: all-small-caps;
+}
+/* Drupal wraps radios/checkboxes groups in a fieldset: keep those quiet. */
+.pico fieldset.fieldgroup,
+.pico :is(.form-composite, fieldset.form-radios, fieldset.form-checkboxes) {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.pico .form-composite > legend,
+.pico fieldset.fieldgroup > legend {
+  margin-bottom: 0.4rem;
+  padding: 0;
+  letter-spacing: 0.01em;
+  color: var(--kn-heading);
+  border: 0;
+  background: none;
+  font-family: var(--kn-font-body);
+  font-size: 0.98rem;
+  font-variant-caps: normal;
+}
+
+.pico details {
+  border-bottom: 1px solid var(--kn-rule);
+}
+.pico details summary {
+  color: var(--kn-heading);
+  font-family: var(--kn-font-display);
+  font-weight: 600;
+}
+.pico details summary::after {
+  background-image: var(--pico-icon-chevron);
+}
+.pico details[open] > summary {
+  color: var(--kn-accent-text);
+}
+/* Drupal's details elements used in forms (e.g. "Advanced") */
+.pico details.form-wrapper,
+.pico details.js-form-wrapper {
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--kn-rule);
+  border-radius: var(--kn-radius);
+  background: color-mix(in sRGB, var(--kn-surface) 60%, transparent);
+}
+
+/* -------------------------------------------------------------------------
+ * Inline forms, search, range, progress
+ * ---------------------------------------------------------------------- */
+.pico .container-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+.pico .container-inline > .form-item {
+  margin-bottom: 0;
+}
+
+.pico [type="search"] {
+  padding-inline-start: 2.6rem;
+  border-radius: 999px;
+  background-image: var(--pico-icon-search);
+  background-repeat: no-repeat;
+  background-position: center left 0.95rem;
+  background-size: 1rem auto;
+}
+
+.pico progress {
+  height: 0.6rem;
+  border: 1px solid var(--kn-rule);
+  border-radius: 999px;
+  box-shadow: var(--kn-inset);
+}
+.pico progress::-webkit-progress-value {
+  background: linear-gradient(180deg, #dcbc7b, var(--kn-brass) 50%, color-mix(in srgb, var(--kn-brass) 85%, black));
+}
+.pico progress::-moz-progress-bar {
+  background: linear-gradient(180deg, #dcbc7b, var(--kn-brass) 50%, color-mix(in srgb, var(--kn-brass) 85%, black));
+}
+
+/* Drupal AJAX throbber, tinted brass. */
+.ajax-progress-throbber .throbber {
+  filter: sepia(1) saturate(2) hue-rotate(-10deg);
+}
+
+/* -------------------------------------------------------------------------
+ * Whole-form paper: wrap a form in .form--parchment to present it as a
+ * sheet of letterhead on the desk.
+ * ---------------------------------------------------------------------- */
+.pico .form--parchment {
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  border: 1px solid var(--kn-vellum);
+  border-radius: var(--kn-radius);
+  background: var(--kn-grain-paper), linear-gradient(180deg, #f8f4ee, var(--kn-parchment) 60%, #ece5d9);
+  box-shadow: var(--kn-shadow-lg);
+}

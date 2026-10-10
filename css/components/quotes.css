@@ -1,0 +1,161 @@
+/**
+ * @file
+ * Blockquotes and callouts: excerpts from a historical journal.
+ *
+ *   blockquote            – journal excerpt: vertical antique-gold border,
+ *                           Fraunces italic, a faint oversized opening mark,
+ *                           attribution in small caps (<footer><cite>).
+ *   blockquote.pull-quote – centered display quote between gilt rules.
+ *   aside.callout         – marginal note with a small-caps label.
+ *                           Variants: --note (brass, default), --tip (hunter),
+ *                           --warning (oxblood).
+ *
+ *   <blockquote>
+ *     <p>…</p>
+ *     <footer>— <cite>Edmund Burke</cite>, <span>Reflections, 1790</span></footer>
+ *   </blockquote>
+ *
+ *   <aside class="callout callout--tip" role="note">
+ *     <p class="callout__title">Nota bene</p>
+ *     <p>…</p>
+ *   </aside>
+ */
+
+/* -------------------------------------------------------------------------
+ * Journal excerpt
+ * ---------------------------------------------------------------------- */
+.pico blockquote {
+  position: relative;
+  margin: 2rem 0;
+  padding: 1.25rem 1.5rem 1.25rem 2rem;
+  color: var(--kn-heading);
+  border: 0;
+  border-inline-start: 3px solid var(--kn-accent);
+  border-radius: 0 var(--kn-radius) var(--kn-radius) 0;
+  background: linear-gradient(90deg, color-mix(in sRGB, var(--kn-accent) 9%, transparent), transparent 85%);
+  /* second, finer gilt line beside the main border */
+  box-shadow: inset 5px 0 0 -4px var(--kn-rule-strong);
+  font-family: var(--kn-font-display);
+  font-size: 1.15rem;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.55;
+  font-variation-settings:
+    "SOFT" 100,
+    "WONK" 1;
+}
+/* Oversized opening mark, set in brass, sitting behind the text. */
+.pico blockquote::before {
+  position: absolute;
+  top: -0.2rem;
+  left: 0.55rem;
+  content: "\201C";
+  pointer-events: none;
+  opacity: 0.22;
+  color: var(--kn-accent);
+  font-family: var(--kn-font-display);
+  font-size: 4.5rem;
+  font-style: normal;
+  line-height: 1;
+}
+.pico blockquote > * {
+  position: relative;
+}
+.pico blockquote p:last-of-type {
+  margin-bottom: 0;
+}
+.pico blockquote footer {
+  margin-top: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--pico-blockquote-footer-color);
+  font-family: var(--kn-font-body);
+  font-size: 0.95rem;
+  font-style: normal;
+  font-variant-caps: all-small-caps;
+}
+.pico blockquote cite {
+  color: var(--kn-accent-text);
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* Pull quote – centered between gilt rules, no side border. */
+.pico blockquote.pull-quote {
+  max-width: 40rem;
+  margin: 2.75rem auto;
+  padding: 1.75rem 1rem;
+  text-align: center;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
+  line-height: 1.4;
+  border-block: 1px solid var(--kn-rule-strong);
+}
+.pico blockquote.pull-quote::before {
+  top: -1.9rem;
+  left: 50%;
+  padding: 0 0.6rem;
+  transform: translateX(-50%);
+  opacity: 1;
+  background: var(--kn-bg);
+  font-size: 3.2rem;
+}
+
+/* -------------------------------------------------------------------------
+ * Callouts – marginal notes
+ * ---------------------------------------------------------------------- */
+.pico .callout {
+  --kn-callout-ink: var(--kn-accent);
+  --kn-callout-label: var(--kn-accent-text);
+
+  position: relative;
+  margin: 1.75rem 0;
+  padding: 1rem 1.25rem 1rem 1.5rem;
+  border: 1px solid var(--kn-rule-faint);
+  border-inline-start: 3px solid var(--kn-callout-ink);
+  border-radius: 0 var(--kn-radius) var(--kn-radius) 0;
+  background: var(--kn-grain), color-mix(in sRGB, var(--kn-callout-ink) 8%, var(--kn-surface));
+  box-shadow: var(--kn-shadow-sm);
+}
+.pico .callout > :last-child {
+  margin-bottom: 0;
+}
+.pico .callout__title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.14em;
+  color: var(--kn-callout-label);
+  font-family: var(--kn-font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  gap: 0.5rem;
+  font-variant-caps: all-small-caps;
+}
+/* Printer's fist / fleuron ornament before the label. */
+.pico .callout__title::before {
+  content: "☙";
+  letter-spacing: 0;
+  font-size: 1.15em;
+  font-variant-caps: normal;
+}
+.pico .callout--tip {
+  --kn-callout-ink: var(--kn-hunter);
+  --kn-callout-label: var(--kn-success);
+}
+.pico .callout--tip .callout__title::before {
+  content: "☞";
+}
+.pico .callout--warning {
+  --kn-callout-ink: var(--kn-oxblood-light);
+  --kn-callout-label: var(--kn-danger);
+}
+.pico .callout--warning .callout__title::before {
+  content: "✠";
+}
+:root[data-theme="light"] .pico .callout--warning,
+.surface-parchment .callout--warning {
+  --kn-callout-ink: var(--kn-oxblood);
+}

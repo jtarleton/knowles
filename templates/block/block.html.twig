@@ -1,0 +1,29 @@
+{#
+/**
+ * @file
+ * Theme override for a block.
+ *
+ * Adds `block`, `block-PROVIDER` and `block-PLUGIN-ID` classes (stable9
+ * prints a bare <div>), so blocks can be styled without depending on their
+ * machine names, which differ from site to site.
+ *
+ * @see template_preprocess_block()
+ */
+#}
+{%
+  set classes = [
+    'block',
+    'block-' ~ configuration.provider|clean_class,
+    'block-' ~ plugin_id|clean_class,
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
+  {{ title_prefix }}
+  {% if label %}
+    <h2{{ title_attributes }}>{{ label }}</h2>
+  {% endif %}
+  {{ title_suffix }}
+  {% block content %}
+    {{ content }}
+  {% endblock %}
+</div>

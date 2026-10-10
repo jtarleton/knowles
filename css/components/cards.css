@@ -1,0 +1,256 @@
+/**
+ * @file
+ * Cards: desk blotters, leather-bound volumes and parchment notes.
+ *
+ *   article / .card      – Pico's card, restyled as a tooled desk blotter.
+ *   .card--book          – a leather-bound volume with a ribbed spine and
+ *                          gilt tooling. Dyes: default oxblood,
+ *                          .card--hunter, .card--tobacco.
+ *   .card--note          – a parchment note with a folded corner; it
+ *                          switches to the light token scheme automatically.
+ *   .card-grid           – responsive shelf for any of the above.
+ *
+ * Suggested markup (matches Pico's <article> sectioning):
+ *   <article class="card card--book">
+ *     <header><p class="card__kicker">Vol. III</p><h3 class="card__title">…</h3></header>
+ *     <p>…</p>
+ *     <footer><a href="…">Read on</a></footer>
+ *   </article>
+ */
+
+/* -------------------------------------------------------------------------
+ * Shelf
+ * ---------------------------------------------------------------------- */
+.pico .card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: 1.5rem;
+  align-items: stretch;
+  margin-bottom: var(--pico-block-spacing-vertical);
+}
+.pico .card-grid > * {
+  margin: 0;
+}
+
+/* -------------------------------------------------------------------------
+ * Default card – a desk blotter in tobacco leather with a gilt keyline.
+ * ---------------------------------------------------------------------- */
+.pico :is(article, .card) {
+  position: relative;
+  padding: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal);
+  border: 1px solid var(--pico-card-border-color);
+  border-radius: var(--kn-radius);
+  background: var(--kn-grain), linear-gradient(180deg, color-mix(in sRGB, var(--kn-surface-raised) 60%, var(--kn-surface)), var(--kn-surface));
+  box-shadow: var(--pico-card-box-shadow);
+}
+/* Drupal's page wrapper <article> for full nodes shouldn't be a card. */
+.pico article.node--view-mode-full,
+.pico article.mt-plain {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.pico :is(article, .card) > :is(header, footer) {
+  margin-inline: calc(var(--pico-block-spacing-horizontal) * -1);
+  padding: calc(var(--pico-block-spacing-vertical) * 0.66) var(--pico-block-spacing-horizontal);
+  background: var(--pico-card-sectioning-background-color);
+}
+.pico :is(article, .card) > header {
+  margin-top: calc(var(--pico-block-spacing-vertical) * -1);
+  margin-bottom: var(--pico-block-spacing-vertical);
+  border-bottom: 1px solid var(--pico-card-border-color);
+  border-radius: var(--kn-radius) var(--kn-radius) 0 0;
+}
+.pico :is(article, .card) > footer {
+  margin-top: var(--pico-block-spacing-vertical);
+  margin-bottom: calc(var(--pico-block-spacing-vertical) * -1);
+  border-top: 1px solid var(--pico-card-border-color);
+  border-radius: 0 0 var(--kn-radius) var(--kn-radius);
+}
+.pico :is(article, .card) > header > :last-child,
+.pico :is(article, .card) > :last-child:not(footer) {
+  margin-bottom: 0;
+}
+
+.pico .card__kicker {
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.16em;
+  color: var(--kn-accent-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-variant-caps: all-small-caps;
+}
+.pico .card__title {
+  --pico-font-size: 1.35rem;
+
+  margin-bottom: 0;
+}
+.pico .card__title a {
+  --pico-color: inherit;
+
+  text-decoration: none;
+}
+.pico .card__title a:hover {
+  --pico-color: var(--kn-accent-hover);
+}
+/* Whole-card link affordance: add .card--linked and put the link in the title. */
+.pico .card--linked .card__title a::after {
+  position: absolute;
+  content: "";
+  inset: 0;
+}
+.pico .card--linked {
+  transition:
+    transform var(--kn-duration) var(--kn-ease),
+    box-shadow var(--kn-duration) var(--kn-ease);
+}
+.pico .card--linked:hover,
+.pico .card--linked:focus-within {
+  transform: translateY(-2px);
+  box-shadow: var(--kn-shadow-lg);
+}
+
+/* -------------------------------------------------------------------------
+ * Leather-bound volume
+ * ---------------------------------------------------------------------- */
+.pico .card--book {
+  --kn-leather: var(--kn-oxblood);
+  --kn-leather-light: #7b3d3f;
+  --kn-leather-dark: #3b1b1c;
+  --kn-spine: 1.6rem;
+  /* Books are always "dark" regardless of scheme. */
+  --kn-heading: #f1e6d2;
+  --kn-text: #e8dccb;
+  --kn-text-muted: #cbb9a3;
+  --kn-accent-text: var(--kn-brass-bright);
+  --kn-accent-hover: #e8cd92;
+  --pico-color: var(--kn-text);
+  --pico-muted-color: var(--kn-text-muted);
+  --pico-primary: var(--kn-accent-text);
+  --pico-primary-hover: var(--kn-accent-hover);
+  --pico-card-sectioning-background-color: transparent;
+  --pico-card-border-color: color-mix(in sRGB, var(--kn-brass) 40%, transparent);
+
+  padding-inline-start: calc(var(--kn-spine) + var(--pico-block-spacing-horizontal));
+  color: var(--kn-text);
+  border: 1px solid var(--kn-leather-dark);
+  border-radius: 2px 6px 6px 2px;
+  background:
+    /* ribbed spine: raised bands + spine shading */
+    linear-gradient(180deg, transparent 0 14%, rgb(0, 0, 0, 0.35) 14% 15%, rgb(255, 220, 180, 0.16) 15% 16%, rgb(0, 0, 0, 0.3) 16% 17.5%, transparent 17.5% 82.5%, rgb(0, 0, 0, 0.35) 82.5% 84%, rgb(255, 220, 180, 0.16) 84% 85%, rgb(0, 0, 0, 0.3) 85% 86%, transparent 86%) left top / var(--kn-spine) 100% no-repeat,
+    linear-gradient(90deg, var(--kn-leather-dark) 0, var(--kn-leather) 35%, var(--kn-leather-dark) 100%) left top / var(--kn-spine) 100% no-repeat,
+    var(--kn-grain-leather),
+    radial-gradient(ellipse 120% 90% at 30% 20%, var(--kn-leather-light), var(--kn-leather) 55%, var(--kn-leather-dark) 110%);
+  box-shadow:
+    0 1px 0 rgb(255, 255, 255, 0.04) inset,
+    4px 6px 0 -2px #d9cfbd,
+    /* page block peeking out */ 4px 6px 0 -1px rgb(0, 0, 0, 0.3),
+    var(--kn-shadow-lg);
+}
+/* Tooled gilt frame on the front board. */
+.pico .card--book::before {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+  border: 1px solid color-mix(in sRGB, var(--kn-brass) 45%, transparent);
+  border-radius: 1px;
+  outline: 1px solid color-mix(in sRGB, var(--kn-brass) 22%, transparent);
+  outline-offset: 3px;
+  inset: 8px 8px 8px calc(var(--kn-spine) + 8px);
+}
+/* Headband on the spine. */
+.pico .card--book::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--kn-spine);
+  width: 2px;
+  content: "";
+  pointer-events: none;
+  background: linear-gradient(90deg, rgb(0, 0, 0, 0.45), rgb(255, 220, 180, 0.12));
+}
+.pico .card--book > * {
+  position: relative;
+  z-index: 1;
+}
+.pico .card--book > header,
+.pico .card--book > footer {
+  margin-inline: 0;
+  padding-inline: 0;
+  border-color: color-mix(in sRGB, var(--kn-brass) 30%, transparent);
+}
+.pico .card--book .card__title {
+  color: var(--kn-heading);
+  font-variation-settings: var(--kn-fraunces-display);
+  text-shadow: 0 1px 0 rgb(0, 0, 0, 0.5);
+}
+.pico .card--book .card__kicker {
+  color: var(--kn-accent-text);
+}
+.pico .card--book a:not([role="button"], .button) {
+  --pico-color: var(--kn-accent-text);
+  --pico-underline: rgb(217, 184, 119, 0.5);
+}
+
+.pico .card--book :is(code, kbd) {
+  color: inherit;
+  border-color: color-mix(in sRGB, var(--kn-brass) 25%, transparent);
+  background: rgb(0, 0, 0, 0.28);
+}
+
+.pico .card--book.card--hunter {
+  --kn-leather: var(--kn-hunter);
+  --kn-leather-light: #4f6857;
+  --kn-leather-dark: #1f2c23;
+}
+.pico .card--book.card--tobacco {
+  --kn-leather: #4a3a2e;
+  --kn-leather-light: #614c3c;
+  --kn-leather-dark: #261d17;
+}
+
+/* -------------------------------------------------------------------------
+ * Parchment note
+ * ---------------------------------------------------------------------- */
+.pico .card--note {
+  --kn-fold: 1.6rem;
+
+  color: var(--kn-text);
+  border: 1px solid var(--kn-vellum);
+  border-radius: 1px;
+  background:
+    /* dog-eared corner: the cut is painted in the page color, the flap in
+       a shaded parchment */
+    linear-gradient(225deg, var(--kn-page-bg) 0 calc(var(--kn-fold) * 0.7071), transparent calc(var(--kn-fold) * 0.7071)) top right / var(--kn-fold) var(--kn-fold) no-repeat,
+    linear-gradient(45deg, #ddd1bb 0 49%, #c9b99c 49% 51%, transparent 51%) top right / var(--kn-fold) var(--kn-fold) no-repeat,
+    var(--kn-grain-paper),
+    linear-gradient(180deg, #f9f5ee 0%, var(--kn-parchment) 45%, #ece4d6 100%);
+  box-shadow:
+    0 1px 1px rgb(60, 40, 20, 0.15),
+    0 14px 26px -14px rgb(0, 0, 0, 0.7);
+}
+.pico .card--note > :is(header, footer) {
+  border-color: color-mix(in sRGB, var(--kn-brass-ink) 25%, transparent);
+  background: transparent;
+}
+.pico .card--note .card__title {
+  font-style: italic;
+  font-variation-settings:
+    "SOFT" 100,
+    "WONK" 1;
+}
+/* A brass pin holding the note to the board – add .card--pinned. */
+.pico .card--note.card--pinned::before {
+  position: absolute;
+  top: -0.45rem;
+  left: 50%;
+  width: 0.9rem;
+  height: 0.9rem;
+  content: "";
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, color-mix(in sRGB, var(--kn-brass) 55%, white), var(--kn-brass) 45%, var(--kn-brass-ink));
+  box-shadow: 0 2px 3px rgb(0, 0, 0, 0.5);
+}
